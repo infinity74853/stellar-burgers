@@ -1,7 +1,7 @@
 export type TIngredient = {
   _id: string;
   name: string;
-  type: string;
+  type: 'bun' | 'main' | 'sauce';
   proteins: number;
   fat: number;
   carbohydrates: number;
@@ -35,6 +35,15 @@ export type TOrdersData = {
 export type TUser = {
   email: string;
   name: string;
+};
+
+export type TWsActions = {
+  wsInit: string;
+  wsClose: string;
+  onOpen: string;
+  onClose: string;
+  onError: string;
+  onMessage: string;
 };
 
 export type TTabMode = 'bun' | 'sauce' | 'main';

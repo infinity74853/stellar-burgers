@@ -1,14 +1,34 @@
-import { useState, useRef, useEffect, FC } from 'react';
+import { useState, useRef, useEffect, FC, useMemo } from 'react';
 import { useInView } from 'react-intersection-observer';
-
-import { TTabMode } from '@utils-types';
+import { useSelector } from '../../services/store';
+import { TTabMode, TIngredient } from '@utils-types';
 import { BurgerIngredientsUI } from '../ui/burger-ingredients';
 
 export const BurgerIngredients: FC = () => {
-  /** TODO: взять переменные из стора */
-  const buns = [];
-  const mains = [];
-  const sauces = [];
+  // Получаем ингредиенты из Redux store
+  const { ingredients, isLoading } = useSelector((state) => state.ingredients);
+
+  // Используем пустой массив по умолчанию
+  const safeIngredients = useMemo(
+    () => (Array.isArray(ingredients) ? ingredients : []),
+    [ingredients]
+  );
+
+  // Фильтруем ингредиенты по категориям
+  const buns = useMemo(
+    () => safeIngredients.filter((ingredient) => ingredient.type === 'bun'),
+    [safeIngredients]
+  );
+
+  const mains = useMemo(
+    () => safeIngredients.filter((ingredient) => ingredient.type === 'main'),
+    [safeIngredients]
+  );
+
+  const sauces = useMemo(
+    () => safeIngredients.filter((ingredient) => ingredient.type === 'sauce'),
+    [safeIngredients]
+  );
 
   const [currentTab, setCurrentTab] = useState<TTabMode>('bun');
   const titleBunRef = useRef<HTMLHeadingElement>(null);
@@ -47,7 +67,10 @@ export const BurgerIngredients: FC = () => {
       titleSaucesRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  return null;
+  // Показываем прелоадер во время загрузки
+  if (isLoading) {
+    return <div>Загрузка ингредиентов...</div>;
+  }
 
   return (
     <BurgerIngredientsUI

@@ -1,8 +1,25 @@
 import React, { FC, memo } from 'react';
+import styles from './feed-info.module.css'; // Исправлено имя файла
 
-import styles from './feed-info.module.css';
+export interface FeedInfoUIProps {
+  feed: {
+    total: number;
+    totalToday: number;
+  };
+  readyOrders: number[];
+  pendingOrders: number[];
+}
 
-import { FeedInfoUIProps, HalfColumnProps, TColumnProps } from './type';
+interface HalfColumnProps {
+  orders: number[];
+  title: string;
+  textColor?: 'blue';
+}
+
+interface TColumnProps {
+  title: string;
+  content: number;
+}
 
 export const FeedInfoUI: FC<FeedInfoUIProps> = memo(
   ({ feed, readyOrders, pendingOrders }) => {
