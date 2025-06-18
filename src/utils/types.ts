@@ -18,12 +18,20 @@ export type TConstructorIngredient = TIngredient & {
 
 export type TOrder = {
   _id: string;
-  status: string;
+  ingredients: string[];
+  status: 'created' | 'pending' | 'done';
   name: string;
   createdAt: string;
   updatedAt: string;
   number: number;
-  ingredients: string[];
+};
+
+export type TOrderResponse = {
+  success: boolean;
+  orders: TOrder[];
+  order?: TOrder;
+  total: number;
+  totalToday: number;
 };
 
 export type TOrdersData = {
@@ -47,3 +55,9 @@ export type TWsActions = {
 };
 
 export type TTabMode = 'bun' | 'sauce' | 'main';
+
+export type TIngredientsState = {
+  ingredients: TIngredient[];
+  isLoading: boolean;
+  error: string | null;
+};

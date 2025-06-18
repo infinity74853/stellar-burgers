@@ -1,38 +1,64 @@
 import { FC, useMemo } from 'react';
-import { TIngredient } from '@utils-types'; // Используем основной тип ингредиента
+import { useNavigate } from 'react-router-dom';
+import { TIngredient } from '@utils-types';
 import { BurgerConstructorUI } from '@ui';
 import { useSelector, useDispatch } from '../../services/store';
-import { createOrder } from '../../services/slices/orderSlice';
-import { clearOrder } from '../../services/slices/orderSlice';
+import { createOrder, clearOrder } from '../../services/slices/ordersSlice';
+import { clearConstructor } from '../../services/slices/burgerConstructorSlice';
 
 export const BurgerConstructor: FC = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
+  // Получаем данные из хранилища
   const { bun, ingredients } = useSelector((state) => state.burgerConstructor);
-  const { orderRequest, orderModalData } = useSelector((state) => state.order);
+  const { currentOrder, isLoading: orderRequest } = useSelector(
+    (state) => state.orders
+  );
+  const { isAuthChecked, user } = useSelector((state) => state.user);
 
+  // Формируем объект для UI компонента
   const constructorItems = {
     bun,
     ingredients
   };
 
+  // Обработчик оформления заказа
   const onOrderClick = () => {
+    // Если пользователь не авторизован - перенаправляем на страницу входа
+    if (!user) {
+      navigate('/login');
+      return;
+    }
+
+    // Если нет булки или уже идет запрос - выходим
     if (!bun || orderRequest) return;
 
+    // Формируем массив id ингредиентов (булка в начале и конце)
     const ingredientIds = [
       bun._id,
       ...ingredients.map((item) => item._id),
       bun._id
     ];
 
-    dispatch(createOrder(ingredientIds));
+    // Отправляем запрос на создание заказа
+    dispatch(createOrder(ingredientIds))
+      .unwrap()
+      .then(() => {
+        // После успешного создания заказа очищаем конструктор
+        dispatch(clearConstructor());
+      })
+      .catch((error) => {
+        console.error('Ошибка при создании заказа:', error);
+      });
   };
 
+  // Закрытие модального окна заказа
   const closeOrderModal = () => {
     dispatch(clearOrder());
   };
 
-  // Исправляем вычисление цены
+  // Вычисляем общую стоимость
   const price = useMemo(() => {
     const bunPrice = bun ? bun.price * 2 : 0;
     const ingredientsPrice = ingredients.reduce(
@@ -47,7 +73,7 @@ export const BurgerConstructor: FC = () => {
       price={price}
       orderRequest={orderRequest}
       constructorItems={constructorItems}
-      orderModalData={orderModalData}
+      orderModalData={currentOrder} // Передаем текущий заказ вместо orderModalData
       onOrderClick={onOrderClick}
       closeOrderModal={closeOrderModal}
     />
