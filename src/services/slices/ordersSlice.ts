@@ -1,26 +1,34 @@
-import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { orderBurgerApi } from '../../utils/burger-api';
-import { TOrder } from '../../utils/types';
+import { TOrder } from '@utils-types';
+import { RootState } from '../store';
 
-interface IOrdersState {
+type TOrdersState = {
   currentOrder: TOrder | null;
   orderHistory: TOrder[];
   isLoading: boolean;
   error: string | null;
-}
+};
 
-const initialState: IOrdersState = {
+const initialState: TOrdersState = {
   currentOrder: null,
   orderHistory: [],
   isLoading: false,
   error: null
 };
 
-export const createOrder = createAsyncThunk(
-  'orders/createOrder',
-  async (ingredientIds: string[]) => {
-    const response = await orderBurgerApi(ingredientIds);
-    return response.order;
+export const createOrder = createAsyncThunk<TOrder, string[]>(
+  'orders/create',
+  async (ingredientIds, { rejectWithValue }) => {
+    try {
+      const res = await orderBurgerApi(ingredientIds);
+      if (!res.success) throw new Error('Ошибка создания заказа');
+      return res.order;
+    } catch (error) {
+      return rejectWithValue(
+        error instanceof Error ? error.message : 'Неизвестная ошибка'
+      );
+    }
   }
 );
 
@@ -31,17 +39,8 @@ const ordersSlice = createSlice({
     clearOrder: (state) => {
       state.currentOrder = null;
     },
-    setCurrentOrder: (state, action: PayloadAction<TOrder>) => {
-      state.currentOrder = action.payload;
-    },
-    setOrderHistory: (state, action: PayloadAction<TOrder[]>) => {
-      state.orderHistory = action.payload;
-    },
-    setLoading: (state, action: PayloadAction<boolean>) => {
-      state.isLoading = action.payload;
-    },
-    setError: (state, action: PayloadAction<string>) => {
-      state.error = action.payload;
+    resetOrderError: (state) => {
+      state.error = null;
     }
   },
   extraReducers: (builder) => {
@@ -53,20 +52,22 @@ const ordersSlice = createSlice({
       .addCase(createOrder.fulfilled, (state, action) => {
         state.isLoading = false;
         state.currentOrder = action.payload;
+        state.orderHistory.unshift(action.payload);
       })
       .addCase(createOrder.rejected, (state, action) => {
         state.isLoading = false;
-        state.error = action.error.message || 'Failed to create order';
+        state.error = action.payload as string;
       });
   }
 });
 
-export const {
-  clearOrder,
-  setCurrentOrder,
-  setOrderHistory,
-  setLoading,
-  setError
-} = ordersSlice.actions;
+// Селекторы
+export const selectCurrentOrder = (state: RootState) =>
+  state.orders.currentOrder;
+export const selectOrderHistory = (state: RootState) =>
+  state.orders.orderHistory;
+export const selectOrdersLoading = (state: RootState) => state.orders.isLoading;
+export const selectOrdersError = (state: RootState) => state.orders.error;
 
+export const { clearOrder, resetOrderError } = ordersSlice.actions;
 export default ordersSlice.reducer;
