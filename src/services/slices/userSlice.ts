@@ -109,5 +109,9 @@ const userSlice = createSlice({
   }
 });
 
+// Селекторы
+export const selectUser = (state: { user: TUserState }) => state.user.user;
+
+// Экспорты
 export const { setUser } = userSlice.actions;
 export default userSlice.reducer;
