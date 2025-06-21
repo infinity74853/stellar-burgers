@@ -26,7 +26,12 @@ function App() {
   const background = location.state?.background;
 
   useEffect(() => {
-    dispatch(fetchIngredients()); // Исправлено на fetchIngredients
+    dispatch(fetchIngredients());
+    dispatch(checkUserAuth());
+  }, [dispatch]);
+
+  useEffect(() => {
+    dispatch(fetchIngredients());
     dispatch(checkUserAuth());
   }, [dispatch]);
 

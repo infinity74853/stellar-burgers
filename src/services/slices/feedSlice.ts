@@ -5,6 +5,7 @@ import { TOrder } from '@utils-types';
 type TFeedState = {
   orders: TOrder[];
   total: number;
+  totalToday: number;
   today: number;
   loading: boolean;
   error: string | null;
@@ -13,6 +14,7 @@ type TFeedState = {
 const initialState: TFeedState = {
   orders: [],
   total: 0,
+  totalToday: 0,
   today: 0,
   loading: false,
   error: null
@@ -23,6 +25,7 @@ export const getFeeds = createAsyncThunk('feed/get', async () => {
   return {
     orders: response.orders,
     total: response.total,
+    totalToday: response.totalToday,
     today: response.totalToday
   };
 });
@@ -41,7 +44,8 @@ const feedSlice = createSlice({
         state.loading = false;
         state.orders = action.payload.orders;
         state.total = action.payload.total;
-        state.today = action.payload.today;
+        state.totalToday = action.payload.totalToday;
+        state.today = action.payload.totalToday;
       })
       .addCase(getFeeds.rejected, (state, action) => {
         state.loading = false;

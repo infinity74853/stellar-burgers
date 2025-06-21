@@ -1,6 +1,6 @@
 import { FC, memo } from 'react';
 import styles from './feed.module.css';
-import { OrdersList, FeedInfo } from '@components'; // Импортируем обновленный FeedInfo
+import { OrdersList, FeedInfo } from '@components';
 import { RefreshButton } from '@zlden/react-developer-burger-ui-components';
 import { TOrder } from '@utils-types';
 
@@ -29,7 +29,6 @@ export const FeedUI: FC<FeedUIProps> = memo(
           <OrdersList orders={orders} />
         </div>
         <div className={styles.columnInfo}>
-          {/* Передаем данные в обновленный FeedInfo */}
           <FeedInfo orders={orders} total={total} today={today} />
         </div>
       </div>
