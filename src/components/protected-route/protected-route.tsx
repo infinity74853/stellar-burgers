@@ -5,24 +5,26 @@ import { RootState } from '../../services/store';
 
 interface ProtectedRouteProps {
   onlyUnAuth?: boolean;
-  children: ReactElement;
+  children: React.ReactElement;
 }
 
 export const ProtectedRoute: FC<ProtectedRouteProps> = ({
   onlyUnAuth = false,
   children
 }) => {
-  // Используем RootState для типизации
-  const user = useSelector((state: RootState) => state.user);
+  const user = useSelector((state: RootState) => state.user.user);
   const location = useLocation();
 
   if (onlyUnAuth && user) {
+    // Если маршрут только для незалогиненных, а юзер есть — редирект
     return <Navigate to={location.state?.from || '/'} replace />;
   }
 
   if (!onlyUnAuth && !user) {
+    // Если маршрут требует авторизации, а юзера нет — на логин
     return <Navigate to='/login' state={{ from: location }} replace />;
   }
 
+  // Всё ок — показываем контент
   return children;
 };

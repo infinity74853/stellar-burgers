@@ -1,4 +1,11 @@
-import { Routes, Route, useLocation, useNavigate } from 'react-router-dom';
+import {
+  Routes,
+  Route,
+  useLocation,
+  useNavigate,
+  Navigate,
+  Outlet
+} from 'react-router-dom';
 import {
   ConstructorPage,
   Feed,
@@ -14,26 +21,34 @@ import { IngredientDetails, Modal, OrderInfo } from '@components';
 import { ProtectedRoute } from '../protected-route/protected-route';
 import { AppHeader } from '../app-header/app-header';
 import styles from './app.module.css';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from '../../services/store';
 import { useEffect } from 'react';
-import { fetchIngredients } from '../../services/slices/ingredientsSlice'; // Исправленный импорт
+import { fetchIngredients } from '../../services/slices/ingredientsSlice';
 import { checkUserAuth } from '../../services/slices/userSlice';
+import { selectIngredientsLoaded } from '../../services/slices/ingredientsSlice';
+import { getCookie } from '../../utils/cookie';
 
 function App() {
   const location = useLocation();
   const navigate = useNavigate();
-  const dispatch = useDispatch<any>();
+  const dispatch = useDispatch();
   const background = location.state?.background;
+  const ingredientsLoaded = useSelector(selectIngredientsLoaded);
 
   useEffect(() => {
-    dispatch(fetchIngredients());
-    dispatch(checkUserAuth());
-  }, [dispatch]);
+    if (!ingredientsLoaded) {
+      dispatch(fetchIngredients()).catch((err) =>
+        console.error('Failed to load ingredients:', err)
+      );
+    }
 
-  useEffect(() => {
-    dispatch(fetchIngredients());
-    dispatch(checkUserAuth());
-  }, [dispatch]);
+    const accessToken = getCookie('accessToken');
+    if (accessToken) {
+      dispatch(checkUserAuth()).catch((err) =>
+        console.error('Auth check failed:', err)
+      );
+    }
+  }, [dispatch, ingredientsLoaded]);
 
   const handleModalClose = () => {
     navigate(-1);
@@ -48,6 +63,7 @@ function App() {
         <Route path='/feed/:number' element={<OrderInfo />} />
         <Route path='/ingredients/:id' element={<IngredientDetails />} />
 
+        {/* Публичные маршруты (только для неавторизованных) */}
         <Route
           path='/login'
           element={
@@ -56,7 +72,6 @@ function App() {
             </ProtectedRoute>
           }
         />
-
         <Route
           path='/register'
           element={
@@ -65,7 +80,6 @@ function App() {
             </ProtectedRoute>
           }
         />
-
         <Route
           path='/forgot-password'
           element={
@@ -74,7 +88,6 @@ function App() {
             </ProtectedRoute>
           }
         />
-
         <Route
           path='/reset-password'
           element={
@@ -84,26 +97,33 @@ function App() {
           }
         />
 
+        {/* Защищенные маршруты */}
         <Route
-          path='/profile'
+          path='/account'
           element={
             <ProtectedRoute>
               <Profile />
             </ProtectedRoute>
           }
         />
-
         <Route
-          path='/profile/orders'
+          path='/account/profile'
+          element={
+            <ProtectedRoute>
+              <Profile />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path='/account/order-history'
           element={
             <ProtectedRoute>
               <ProfileOrders />
             </ProtectedRoute>
           }
         />
-
         <Route
-          path='/profile/orders/:number'
+          path='/account/order-history/:number'
           element={
             <ProtectedRoute>
               <OrderInfo />
@@ -111,9 +131,24 @@ function App() {
           }
         />
 
+        {/* Редиректы для старых маршрутов */}
+        <Route
+          path='/profile'
+          element={<Navigate to='/account/profile' replace />}
+        />
+        <Route
+          path='/profile/orders'
+          element={<Navigate to='/account/order-history' replace />}
+        />
+        <Route
+          path='/profile/orders/:number'
+          element={<Navigate to='/account/order-history/:number' replace />}
+        />
+
         <Route path='*' element={<NotFound404 />} />
       </Routes>
 
+      {/* Модальные окна */}
       {background && (
         <Routes>
           <Route
@@ -133,7 +168,7 @@ function App() {
             }
           />
           <Route
-            path='/profile/orders/:number'
+            path='/account/order-history/:number'
             element={
               <Modal title='Детали заказа' onClose={handleModalClose}>
                 <OrderInfo />

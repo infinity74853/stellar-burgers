@@ -26,6 +26,10 @@ export const OrderCardUI: FC<OrderCardUIProps> = memo(
           </span>
           <span className='text text_type_main-default text_color_inactive'>
             <FormattedDate date={orderInfo.date} />
+            <span style={{ marginLeft: '8px', color: '#8585AD' }}>
+              i-GMT{new Date().getTimezoneOffset() / -60 >= 0 ? '+' : ''}
+              {new Date().getTimezoneOffset() / -60}
+            </span>
           </span>
         </div>
         <h4 className={`pt-6 text text_type_main-medium ${styles.order_name}`}>

@@ -5,16 +5,15 @@ import { TTabMode, TIngredient } from '@utils-types';
 import { BurgerIngredientsUI } from '../ui/burger-ingredients';
 
 export const BurgerIngredients: FC = () => {
-  // Получаем ингредиенты из Redux store
-  const { ingredients, isLoading } = useSelector((state) => state.ingredients);
+  const { ingredients, isLoading, loaded } = useSelector(
+    (state) => state.ingredients
+  );
 
-  // Используем пустой массив по умолчанию
   const safeIngredients = useMemo(
     () => (Array.isArray(ingredients) ? ingredients : []),
     [ingredients]
   );
 
-  // Фильтруем ингредиенты по категориям
   const buns = useMemo(
     () => safeIngredients.filter((ingredient) => ingredient.type === 'bun'),
     [safeIngredients]
@@ -67,9 +66,12 @@ export const BurgerIngredients: FC = () => {
       titleSaucesRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  // Показываем прелоадер во время загрузки
-  if (isLoading) {
+  if (!loaded || isLoading) {
     return <div>Загрузка ингредиентов...</div>;
+  }
+
+  if (!safeIngredients.length) {
+    return <div>Не удалось загрузить ингредиенты</div>;
   }
 
   return (

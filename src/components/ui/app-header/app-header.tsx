@@ -14,7 +14,7 @@ export const AppHeaderUI: FC<TAppHeaderUIProps> = ({ userName }) => {
 
   const isConstructorActive = location.pathname === '/';
   const isFeedActive = location.pathname.startsWith('/feed');
-  const isProfileActive = location.pathname.startsWith('/profile');
+  const isProfileActive = location.pathname.startsWith('/account');
 
   return (
     <header className={styles.header}>
@@ -43,7 +43,7 @@ export const AppHeaderUI: FC<TAppHeaderUIProps> = ({ userName }) => {
           </Link>
         </div>
         <Link
-          to='/profile'
+          to='/account'
           className={`${styles.link} ${styles.link_position_last} pt-4 pb-4 pl-5 pr-5`}
         >
           <ProfileIcon type={isProfileActive ? 'primary' : 'secondary'} />
