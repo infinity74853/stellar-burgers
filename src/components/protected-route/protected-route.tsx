@@ -16,12 +16,15 @@ export const ProtectedRoute: FC<ProtectedRouteProps> = ({
   const location = useLocation();
 
   if (onlyUnAuth && user) {
+    // Если маршрут только для незалогиненных, а юзер есть — редирект
     return <Navigate to={location.state?.from || '/'} replace />;
   }
 
   if (!onlyUnAuth && !user) {
+    // Если маршрут требует авторизации, а юзера нет — на логин
     return <Navigate to='/login' state={{ from: location }} replace />;
   }
 
+  // Всё ок — показываем контент
   return children;
 };

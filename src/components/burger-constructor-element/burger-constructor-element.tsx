@@ -11,7 +11,7 @@ export const BurgerConstructorElement: FC<BurgerConstructorElementProps> = memo(
     const dispatch = useDispatch();
 
     const [{ isDragging }, drag] = useDrag({
-      type: 'constructor-ingredient',
+      type: 'constructor-ingredient', // только для внутреннего перемещения
       item: { index },
       collect: (monitor) => ({
         isDragging: monitor.isDragging()
@@ -20,8 +20,8 @@ export const BurgerConstructorElement: FC<BurgerConstructorElementProps> = memo(
 
     const [, drop] = useDrop({
       accept: 'constructor-ingredient',
-      hover: (item: { index: number }, monitor) => {
-        if (!item || item.index === undefined || item.index === index) return;
+      hover: (item: { index: number }) => {
+        if (item.index === index) return;
 
         dispatch(moveIngredient({ from: item.index, to: index }));
         item.index = index;
@@ -40,7 +40,9 @@ export const BurgerConstructorElement: FC<BurgerConstructorElementProps> = memo(
       }
     };
 
-    const handleClose = () => {};
+    const handleClose = () => {
+      // Логика удаления
+    };
 
     return (
       <div ref={(node) => drag(drop(node))}>

@@ -27,7 +27,7 @@ export const BurgerConstructorUI: FC<BurgerConstructorUIProps> = ({
   const handleDrop = useCallback(
     (e: React.DragEvent<HTMLDivElement>) => {
       e.preventDefault();
-      console.log('onDrop сработал');
+
       const data = e.dataTransfer.getData('ingredient');
       if (!data) {
         console.error('Данные пустые');

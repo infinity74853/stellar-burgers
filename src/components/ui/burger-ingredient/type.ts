@@ -1,12 +1,10 @@
+import { Location } from 'react-router-dom';
 import { TIngredient } from '@utils-types';
-import { Location } from 'history';
 
 export type TBurgerIngredientUIProps = {
   ingredient: TIngredient;
-  count?: number;
+  count: number;
+  locationState: { background: Location };
   handleAdd: () => void;
-  locationState?: {
-    background: Location;
-  };
-  onDragStart?: (e: React.DragEvent<HTMLDivElement>) => void;
+  onDragStart: (e: React.DragEvent<HTMLDivElement>) => void;
 };

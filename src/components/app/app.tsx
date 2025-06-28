@@ -1,8 +1,6 @@
 import React from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
-
-// Страницы
 import {
   Routes,
   Route,
@@ -10,32 +8,21 @@ import {
   Navigate,
   useNavigate
 } from 'react-router-dom';
-
 import {
   ConstructorPage,
   Feed,
-  ForgotPassword,
   Login,
-  NotFound404,
+  Register,
+  ForgotPassword,
+  ResetPassword,
   Profile,
   ProfileOrders,
-  Register,
-  ResetPassword
+  NotFound404
 } from '@pages';
-
-// Компоненты
-import {
-  AppHeader,
-  IngredientDetails,
-  Modal,
-  OrderInfo,
-  ProtectedRoute
-} from '@components';
-
-// Стили
+import { IngredientDetails, Modal, OrderInfo } from '@components';
+import { ProtectedRoute } from '../protected-route/protected-route';
+import { AppHeader } from '../app-header/app-header';
 import styles from './app.module.css';
-
-// Redux
 import { useDispatch, useSelector } from '../../services/store';
 import { useEffect } from 'react';
 import { fetchIngredients } from '../../services/slices/ingredientsSlice';
@@ -47,22 +34,20 @@ function App() {
   const location = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-
-  const background = location.state?.background || null;
+  const background = location.state?.background;
   const ingredientsLoaded = useSelector(selectIngredientsLoaded);
 
-  // Загрузка ингредиентов и проверка авторизации
   useEffect(() => {
     if (!ingredientsLoaded) {
       dispatch(fetchIngredients()).catch((err) =>
-        console.error('Не удалось загрузить ингредиенты:', err)
+        console.error('Failed to load ingredients:', err)
       );
     }
 
-    const token = getCookie('accessToken');
-    if (token && !location.pathname.includes('login')) {
+    const accessToken = getCookie('accessToken');
+    if (accessToken) {
       dispatch(checkUserAuth()).catch((err) =>
-        console.error('Ошибка проверки авторизации:', err)
+        console.error('Auth check failed:', err)
       );
     }
   }, [dispatch, ingredientsLoaded]);
@@ -75,126 +60,125 @@ function App() {
     <DndProvider backend={HTML5Backend}>
       <div className={styles.app}>
         <AppHeader />
-        <main className={styles.content}>
-          <Routes location={background || location}>
-            {/* Публичные страницы */}
-            <Route path='/' element={<ConstructorPage />} />
-            <Route path='/feed' element={<Feed />} />
-            <Route path='/feed/:number' element={<OrderInfo />} />
-            <Route path='/ingredients/:id' element={<IngredientDetails />} />
+        <Routes location={background || location}>
+          <Route path='/' element={<ConstructorPage />} />
+          <Route path='/feed' element={<Feed />} />
+          <Route path='/feed/:number' element={<OrderInfo />} />
 
-            {/* Авторизация */}
-            <Route
-              path='/login'
-              element={
-                <ProtectedRoute onlyUnAuth>
-                  <Login />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path='/register'
-              element={
-                <ProtectedRoute onlyUnAuth>
-                  <Register />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path='/forgot-password'
-              element={
-                <ProtectedRoute onlyUnAuth>
-                  <ForgotPassword />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path='/reset-password'
-              element={
-                <ProtectedRoute onlyUnAuth>
-                  <ResetPassword />
-                </ProtectedRoute>
-              }
-            />
+          {/* Публичные маршруты */}
+          <Route
+            path='/login'
+            element={
+              <ProtectedRoute onlyUnAuth>
+                <Login />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path='/register'
+            element={
+              <ProtectedRoute onlyUnAuth>
+                <Register />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path='/forgot-password'
+            element={
+              <ProtectedRoute onlyUnAuth>
+                <ForgotPassword />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path='/reset-password'
+            element={
+              <ProtectedRoute onlyUnAuth>
+                <ResetPassword />
+              </ProtectedRoute>
+            }
+          />
 
-            {/* Профиль пользователя */}
+          {/* Защищенные маршруты */}
+          <Route
+            path='/account'
+            element={
+              <ProtectedRoute>
+                <Profile />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path='/account/profile'
+            element={
+              <ProtectedRoute>
+                <Profile />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path='/account/order-history'
+            element={
+              <ProtectedRoute>
+                <ProfileOrders />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path='/account/order-history/:number'
+            element={
+              <ProtectedRoute>
+                <OrderInfo />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Редиректы для старых маршрутов */}
+          <Route
+            path='/profile'
+            element={<Navigate to='/account/profile' replace />}
+          />
+          <Route
+            path='/profile/orders'
+            element={<Navigate to='/account/order-history' replace />}
+          />
+          <Route
+            path='/profile/orders/:number'
+            element={<Navigate to='/account/order-history/:number' replace />}
+          />
+
+          <Route path='*' element={<NotFound404 />} />
+        </Routes>
+
+        {/* Модальные окна */}
+        {background && (
+          <Routes>
             <Route
-              path='/account'
+              path='/feed/:number'
               element={
-                <ProtectedRoute>
-                  <Profile />
-                </ProtectedRoute>
+                <Modal title='Детали заказа' onClose={handleModalClose}>
+                  <OrderInfo />
+                </Modal>
               }
             />
             <Route
-              path='/account/profile'
+              path='/ingredients/:id'
               element={
-                <ProtectedRoute>
-                  <Profile />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path='/account/order-history'
-              element={
-                <ProtectedRoute>
-                  <ProfileOrders />
-                </ProtectedRoute>
+                <Modal title='Детали ингредиента' onClose={handleModalClose}>
+                  <IngredientDetails />
+                </Modal>
               }
             />
             <Route
               path='/account/order-history/:number'
               element={
-                <ProtectedRoute>
+                <Modal title='Детали заказа' onClose={handleModalClose}>
                   <OrderInfo />
-                </ProtectedRoute>
+                </Modal>
               }
             />
-
-            {/* Редиректы */}
-            <Route
-              path='/profile'
-              element={<Navigate to='/account/profile' replace />}
-            />
-            <Route
-              path='/profile/orders'
-              element={<Navigate to='/account/order-history' replace />}
-            />
-            <Route path='*' element={<NotFound404 />} />
           </Routes>
-
-          {/* Модальные окна */}
-          {background && (
-            <Routes>
-              <Route
-                path='/feed/:number'
-                element={
-                  <Modal title='Детали заказа' onClose={handleModalClose}>
-                    <OrderInfo />
-                  </Modal>
-                }
-              />
-              <Route
-                path='/ingredients/:id'
-                element={
-                  <Modal title='Детали ингредиента' onClose={handleModalClose}>
-                    <IngredientDetails />
-                  </Modal>
-                }
-              />
-              <Route
-                path='/account/order-history/:number'
-                element={
-                  <ProtectedRoute>
-                    <Modal title='Детали заказа' onClose={handleModalClose}>
-                      <OrderInfo />
-                    </Modal>
-                  </ProtectedRoute>
-                }
-              />
-            </Routes>
-          )}
-        </main>
+        )}
       </div>
     </DndProvider>
   );

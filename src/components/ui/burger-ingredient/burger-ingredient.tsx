@@ -10,18 +10,13 @@ import {
 
 import { TBurgerIngredientUIProps } from './type';
 
-export const BurgerIngredientUI = memo(
-  ({
-    ingredient,
-    count,
-    handleAdd,
-    locationState,
-    onDragStart
-  }: TBurgerIngredientUIProps) => {
+export const BurgerIngredientUI: FC<TBurgerIngredientUIProps> = memo(
+  ({ ingredient, count, handleAdd, locationState, onDragStart }) => {
     const { image, price, name, _id } = ingredient;
 
     return (
       <li className={styles.container}>
+        {/* Добавляем draggable и onDragStart */}
         <div draggable onDragStart={onDragStart} className={styles.draggable}>
           <Link
             className={styles.article}
@@ -30,9 +25,9 @@ export const BurgerIngredientUI = memo(
           >
             {count && <Counter count={count} />}
             <img
+              className={styles.img}
               src={image}
               alt='картинка ингредиента.'
-              className={styles.img}
             />
             <div className={`${styles.cost} mt-2 mb-2`}>
               <p className='text text_type_digits-default mr-2'>{price}</p>
