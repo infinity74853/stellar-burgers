@@ -11,13 +11,11 @@ export const ProfileMenu: FC = () => {
 
   const handleLogout = async () => {
     try {
-      // Диспатчим действие выхода и ждем его завершения
       await dispatch(logout()).unwrap();
-      // После успешного выхода перенаправляем на страницу входа
+
       navigate('/login');
     } catch (error) {
       console.error('Ошибка при выходе:', error);
-      // Можно добавить обработку ошибки (например, показать уведомление)
     }
   };
 

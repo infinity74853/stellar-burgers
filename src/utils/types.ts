@@ -1,3 +1,5 @@
+// Типы для ингредиентов
+
 export type TIngredient = {
   _id: string;
   name: string;
@@ -12,9 +14,12 @@ export type TIngredient = {
   image_mobile: string;
 };
 
+// Расширяем тип TIngredient уникальным id, чтобы использовать в конструкторе бургера
 export type TConstructorIngredient = TIngredient & {
   id: string;
 };
+
+// Типы для заказов
 
 export type TOrder = {
   _id: string;
@@ -40,10 +45,17 @@ export type TOrdersData = {
   totalToday: number;
 };
 
+// Типы для пользователя
+
 export type TUser = {
   email: string;
   name: string;
+  password?: string;
+  accessToken?: string;
+  refreshToken?: string;
 };
+
+// Типы для WebSocket-действий
 
 export type TWsActions = {
   wsInit: string;
@@ -54,10 +66,31 @@ export type TWsActions = {
   onMessage: string;
 };
 
+// Режимы табов (булки, соусы, начинки)
+
 export type TTabMode = 'bun' | 'sauce' | 'main';
+
+// Состояние ингредиентов в хранилище
 
 export type TIngredientsState = {
   ingredients: TIngredient[];
   isLoading: boolean;
   error: string | null;
+};
+
+// Стейт пользователя
+
+export type TUserState = {
+  user: TUser | null;
+  isAuthChecked: boolean;
+  isAuthenticated: boolean;
+  loading: boolean;
+  error: string | null;
+};
+
+// Для ответа от API
+
+export type TErrorResponse = {
+  message: string;
+  name: string;
 };

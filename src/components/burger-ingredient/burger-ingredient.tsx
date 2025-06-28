@@ -1,10 +1,12 @@
-import { FC, memo } from 'react';
+import React, { FC, memo } from 'react';
 import { useLocation } from 'react-router-dom';
 import { BurgerIngredientUI } from '@ui';
 import { TBurgerIngredientProps } from './type';
 import { useDispatch } from '../../services/store';
-import { addIngredient } from '../../services/slices/burgerConstructorSlice';
-import { TIngredient } from '@utils-types';
+import {
+  addIngredient,
+  addBun
+} from '../../services/slices/burgerConstructorSlice';
 
 export const BurgerIngredient: FC<TBurgerIngredientProps> = memo(
   ({ ingredient, count }) => {
@@ -12,7 +14,17 @@ export const BurgerIngredient: FC<TBurgerIngredientProps> = memo(
     const dispatch = useDispatch();
 
     const handleAdd = () => {
-      dispatch(addIngredient(ingredient));
+      if (ingredient.type === 'bun') {
+        dispatch(addBun(ingredient));
+      } else {
+        dispatch(addIngredient(ingredient));
+      }
+    };
+
+    // Логика drag and drop
+    const handleDragStart = (e: React.DragEvent<HTMLDivElement>) => {
+      console.log('Начали перетаскивать:', ingredient);
+      e.dataTransfer.setData('ingredient', JSON.stringify(ingredient));
     };
 
     return (
@@ -21,6 +33,7 @@ export const BurgerIngredient: FC<TBurgerIngredientProps> = memo(
         count={count}
         locationState={{ background: location }}
         handleAdd={handleAdd}
+        onDragStart={handleDragStart} // <-- Передаем событие
       />
     );
   }
