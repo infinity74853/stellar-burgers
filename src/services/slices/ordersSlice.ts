@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { orderBurgerApi } from '../../utils/burger-api';
+import { orderBurgerApi, getOrdersApi } from '../../utils/burger-api';
 import { TOrder } from '@utils-types';
 import { RootState } from '../store';
 
@@ -32,6 +32,22 @@ export const createOrder = createAsyncThunk<TOrder, string[]>(
   }
 );
 
+export const fetchUserOrders = createAsyncThunk<TOrder[]>(
+  'orders/fetchAll',
+  async (_, { rejectWithValue }) => {
+    try {
+      const orders = await getOrdersApi();
+      return orders;
+    } catch (error) {
+      return rejectWithValue(
+        error instanceof Error
+          ? error.message
+          : 'Ошибка загрузки истории заказов'
+      );
+    }
+  }
+);
+
 const ordersSlice = createSlice({
   name: 'orders',
   initialState,
@@ -55,6 +71,18 @@ const ordersSlice = createSlice({
         state.orderHistory.unshift(action.payload);
       })
       .addCase(createOrder.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload as string;
+      })
+      .addCase(fetchUserOrders.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(fetchUserOrders.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.orderHistory = action.payload;
+      })
+      .addCase(fetchUserOrders.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload as string;
       });

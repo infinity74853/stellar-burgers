@@ -29,7 +29,7 @@ export const FeedUI: FC<FeedUIProps> = memo(
           <OrdersList orders={orders} />
         </div>
         <div className={styles.columnInfo}>
-          <FeedInfo orders={orders} total={total} today={today} />
+          <FeedInfo /> {/* Убрали пропсы, так как они берутся из стора */}
         </div>
       </div>
     </main>

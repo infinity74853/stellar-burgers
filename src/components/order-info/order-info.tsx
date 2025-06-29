@@ -12,10 +12,8 @@ export const OrderInfo: FC = () => {
   const orders = useSelector(selectOrders);
   const ingredients = useSelector(selectIngredients);
 
-  // Находим заказ по номеру
   const orderData = orders.find((order) => order.number === parseInt(number!));
 
-  /* Готовим данные для отображения */
   const orderInfo = useMemo(() => {
     if (!orderData || !ingredients.length) return null;
 

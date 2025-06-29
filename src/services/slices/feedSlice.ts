@@ -8,7 +8,7 @@ type TFeedState = {
   totalToday: number;
   loading: boolean;
   error: string | null;
-  currentOrder: TOrder | null; // Добавляем текущий выбранный заказ
+  currentOrder: TOrder | null;
 };
 
 const initialState: TFeedState = {
@@ -17,7 +17,7 @@ const initialState: TFeedState = {
   totalToday: 0,
   loading: false,
   error: null,
-  currentOrder: null // Инициализируем как null
+  currentOrder: null
 };
 
 export const getFeeds = createAsyncThunk('feed/get', async () => {
@@ -29,14 +29,12 @@ export const feedSlice = createSlice({
   name: 'feed',
   initialState,
   reducers: {
-    // Добавляем редьюсеры для управления текущим заказом
     setCurrentOrder: (state, action) => {
       state.currentOrder = action.payload;
     },
     clearCurrentOrder: (state) => {
       state.currentOrder = null;
     },
-    // Опционально: обновляем заказ в списке
     updateOrder: (state, action) => {
       const index = state.orders.findIndex(
         (order) => order._id === action.payload._id
@@ -58,7 +56,6 @@ export const feedSlice = createSlice({
         state.total = action.payload.total;
         state.totalToday = action.payload.totalToday;
 
-        // Если есть текущий заказ - обновляем его данные
         if (state.currentOrder) {
           const updatedOrder = action.payload.orders.find(
             (order) => order._id === state.currentOrder!._id
@@ -75,13 +72,14 @@ export const feedSlice = createSlice({
   }
 });
 
-// Экспортируем экшены
 export const { setCurrentOrder, clearCurrentOrder, updateOrder } =
   feedSlice.actions;
 
-// Селекторы
 export const selectFeed = (state: { feed: TFeedState }) => state.feed;
 export const selectOrders = (state: { feed: TFeedState }) => state.feed.orders;
+export const selectTotal = (state: { feed: TFeedState }) => state.feed.total;
+export const selectTotalToday = (state: { feed: TFeedState }) =>
+  state.feed.totalToday;
 export const selectCurrentOrder = (state: { feed: TFeedState }) =>
   state.feed.currentOrder;
 
