@@ -3,7 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import { TIngredient } from '@utils-types';
 import { BurgerConstructorUI } from '@ui';
 import { useSelector, useDispatch } from '../../services/store';
-import { createOrder, clearOrder } from '../../services/slices/ordersSlice';
+import {
+  createOrder,
+  clearOrder
+} from '../../services/slices/orderHistorySlice';
 import {
   clearConstructor,
   moveIngredient,
@@ -89,7 +92,7 @@ export const BurgerConstructor: FC = () => {
       onOrderClick={onOrderClick}
       closeOrderModal={closeOrderModal}
       moveIngredient={moveItem}
-      onAddIngredient={handleAddIngredient} // <-- передаём функцию
+      onAddIngredient={handleAddIngredient}
     />
   );
 };

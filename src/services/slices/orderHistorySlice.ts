@@ -17,6 +17,7 @@ const initialState: TOrdersState = {
   error: null
 };
 
+// Создание нового заказа
 export const createOrder = createAsyncThunk<TOrder, string[]>(
   'orders/create',
   async (ingredientIds, { rejectWithValue }) => {
@@ -32,6 +33,7 @@ export const createOrder = createAsyncThunk<TOrder, string[]>(
   }
 );
 
+// Получение истории заказов
 export const fetchUserOrders = createAsyncThunk<TOrder[]>(
   'orders/fetchAll',
   async (_, { rejectWithValue }) => {
@@ -48,6 +50,7 @@ export const fetchUserOrders = createAsyncThunk<TOrder[]>(
   }
 );
 
+// Slice
 const ordersSlice = createSlice({
   name: 'orders',
   initialState,
@@ -60,32 +63,34 @@ const ordersSlice = createSlice({
     }
   },
   extraReducers: (builder) => {
-    builder
-      .addCase(createOrder.pending, (state) => {
-        state.isLoading = true;
-        state.error = null;
-      })
-      .addCase(createOrder.fulfilled, (state, action) => {
-        state.isLoading = false;
-        state.currentOrder = action.payload;
-        state.orderHistory.unshift(action.payload);
-      })
-      .addCase(createOrder.rejected, (state, action) => {
-        state.isLoading = false;
-        state.error = action.payload as string;
-      })
-      .addCase(fetchUserOrders.pending, (state) => {
-        state.isLoading = true;
-        state.error = null;
-      })
-      .addCase(fetchUserOrders.fulfilled, (state, action) => {
-        state.isLoading = false;
-        state.orderHistory = action.payload;
-      })
-      .addCase(fetchUserOrders.rejected, (state, action) => {
-        state.isLoading = false;
-        state.error = action.payload as string;
-      });
+    // createOrder
+    builder.addCase(createOrder.pending, (state) => {
+      state.isLoading = true;
+      state.error = null;
+    });
+    builder.addCase(createOrder.fulfilled, (state, action) => {
+      state.isLoading = false;
+      state.currentOrder = action.payload;
+      state.orderHistory.unshift(action.payload);
+    });
+    builder.addCase(createOrder.rejected, (state, action) => {
+      state.isLoading = false;
+      state.error = action.payload as string;
+    });
+
+    // fetchUserOrders
+    builder.addCase(fetchUserOrders.pending, (state) => {
+      state.isLoading = true;
+      state.error = null;
+    });
+    builder.addCase(fetchUserOrders.fulfilled, (state, action) => {
+      state.isLoading = false;
+      state.orderHistory = action.payload;
+    });
+    builder.addCase(fetchUserOrders.rejected, (state, action) => {
+      state.isLoading = false;
+      state.error = action.payload as string;
+    });
   }
 });
 

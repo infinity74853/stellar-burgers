@@ -1,7 +1,7 @@
 import { FC } from 'react';
 import styles from './orders-list.module.css';
 import { OrdersListUIProps } from './type';
-import { OrderCard } from '@components'; // Импортируем OrderCard, а не OrderCardUI
+import { OrderCard } from '@components';
 
 export const OrdersListUI: FC<OrdersListUIProps> = ({ orders }) => (
   <div className={`${styles.content}`}>
