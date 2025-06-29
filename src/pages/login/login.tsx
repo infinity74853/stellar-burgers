@@ -1,5 +1,3 @@
-// src\pages\login\login.tsx
-
 import { FC, SyntheticEvent, useState } from 'react';
 import { LoginUI } from '@ui-pages';
 import { useDispatch } from '../../services/store';
@@ -25,7 +23,7 @@ export const Login: FC = () => {
     dispatch(login({ email, password }))
       .unwrap()
       .then(() => {
-        navigate('/'); // или '/account/profile', если нужно
+        navigate('/');
       })
       .catch((err) => {
         setError(err.message || 'Ошибка авторизации');

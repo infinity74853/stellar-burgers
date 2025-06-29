@@ -41,7 +41,7 @@ export const BurgerIngredient: FC<TBurgerIngredientProps> = memo(
         count={count}
         locationState={{ background: location }}
         handleAdd={handleAdd}
-        onClick={handleClick} // Добавляем обработчик клика
+        onClick={handleClick}
         onDragStart={handleDragStart}
       />
     );

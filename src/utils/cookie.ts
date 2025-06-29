@@ -7,7 +7,6 @@ export function getCookie(name: string): string | undefined {
   return matches ? decodeURIComponent(matches[1]) : undefined;
 }
 
-// Добавляем функцию getAccessToken
 export function getAccessToken(): string | undefined {
   return getCookie('accessToken');
 }

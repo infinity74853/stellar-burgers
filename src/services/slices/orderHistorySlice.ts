@@ -17,7 +17,6 @@ const initialState: TOrdersState = {
   error: null
 };
 
-// Создание нового заказа
 export const createOrder = createAsyncThunk<TOrder, string[]>(
   'orders/create',
   async (ingredientIds, { rejectWithValue }) => {
@@ -33,7 +32,6 @@ export const createOrder = createAsyncThunk<TOrder, string[]>(
   }
 );
 
-// Получение истории заказов
 export const fetchUserOrders = createAsyncThunk<TOrder[]>(
   'orders/fetchAll',
   async (_, { rejectWithValue }) => {
@@ -50,7 +48,6 @@ export const fetchUserOrders = createAsyncThunk<TOrder[]>(
   }
 );
 
-// Slice
 const ordersSlice = createSlice({
   name: 'orders',
   initialState,
@@ -63,7 +60,6 @@ const ordersSlice = createSlice({
     }
   },
   extraReducers: (builder) => {
-    // createOrder
     builder.addCase(createOrder.pending, (state) => {
       state.isLoading = true;
       state.error = null;
@@ -78,7 +74,6 @@ const ordersSlice = createSlice({
       state.error = action.payload as string;
     });
 
-    // fetchUserOrders
     builder.addCase(fetchUserOrders.pending, (state) => {
       state.isLoading = true;
       state.error = null;
@@ -94,7 +89,6 @@ const ordersSlice = createSlice({
   }
 });
 
-// Селекторы
 export const selectCurrentOrder = (state: RootState) =>
   state.orders.currentOrder;
 export const selectOrderHistory = (state: RootState) =>

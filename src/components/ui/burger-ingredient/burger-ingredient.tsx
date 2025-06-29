@@ -20,13 +20,13 @@ export const BurgerIngredientUI: FC<TBurgerIngredientUIProps> = memo(
           draggable
           onDragStart={onDragStart}
           className={styles.draggable}
-          onClick={onClick} // Добавляем обработчик клика
+          onClick={onClick}
         >
           <Link
             className={styles.article}
             to={`/ingredients/${_id}`}
             state={locationState}
-            onClick={(e) => e.preventDefault()} // Предотвращаем переход по ссылке
+            onClick={(e) => e.preventDefault()}
           >
             {count && <Counter count={count} />}
             <img
@@ -45,7 +45,7 @@ export const BurgerIngredientUI: FC<TBurgerIngredientUIProps> = memo(
           <AddButton
             text='Добавить'
             onClick={(e) => {
-              e.stopPropagation(); // Останавливаем всплытие, чтобы не срабатывал onClick ингредиента
+              e.stopPropagation();
               handleAdd();
             }}
             extraClass={`${styles.addButton} mt-8`}

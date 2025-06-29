@@ -1,4 +1,4 @@
-import { FC, useMemo } from 'react';
+import { FC, useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { TIngredient } from '@utils-types';
 import { BurgerConstructorUI } from '@ui';
@@ -13,26 +13,39 @@ import {
   addIngredient as addIngredientAction,
   addBun
 } from '../../services/slices/burgerConstructorSlice';
+import { useDrop } from 'react-dnd';
+import styles from './burger-constructor.module.css';
 
 export const BurgerConstructor: FC = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  // Получаем данные из хранилища
   const { bun, ingredients } = useSelector((state) => state.burgerConstructor);
   const { currentOrder, isLoading: orderRequest } = useSelector(
     (state) => state.orders
   );
   const { user } = useSelector((state) => state.user);
 
-  // Формируем объект для UI компонента
+  const [{ isHover }, dropTarget] = useDrop<
+    TIngredient,
+    void,
+    { isHover: boolean }
+  >({
+    accept: 'ingredient',
+    collect: (monitor) => ({
+      isHover: monitor.isOver()
+    }),
+    drop: (item: TIngredient) => {
+      handleAddIngredient(item);
+    }
+  });
+
   const constructorItems = {
     bun,
     ingredients
   };
 
-  // Обработчик оформления заказа
-  const onOrderClick = () => {
+  const onOrderClick = useCallback(() => {
     if (!user) {
       navigate('/login');
       return;
@@ -54,11 +67,11 @@ export const BurgerConstructor: FC = () => {
       .catch((error) => {
         console.error('Ошибка при создании заказа:', error);
       });
-  };
+  }, [user, bun, ingredients, orderRequest, dispatch, navigate]);
 
-  const closeOrderModal = () => {
+  const closeOrderModal = useCallback(() => {
     dispatch(clearOrder());
-  };
+  }, [dispatch]);
 
   const price = useMemo(() => {
     const bunPrice = bun ? bun.price * 2 : 0;
@@ -69,30 +82,36 @@ export const BurgerConstructor: FC = () => {
     return bunPrice + ingredientsPrice;
   }, [bun, ingredients]);
 
-  // Передаём функцию перемещения в UI-компонент
-  const moveItem = (dragIndex: number, hoverIndex: number) => {
-    dispatch(moveIngredient({ from: dragIndex, to: hoverIndex }));
-  };
+  const moveItem = useCallback(
+    (dragIndex: number, hoverIndex: number) => {
+      dispatch(moveIngredient({ from: dragIndex, to: hoverIndex }));
+    },
+    [dispatch]
+  );
 
-  // Передаём функцию добавления через drag and drop
-  const handleAddIngredient = (ingredient: TIngredient) => {
-    if (ingredient.type === 'bun') {
-      dispatch(addBun(ingredient));
-    } else {
-      dispatch(addIngredientAction(ingredient));
-    }
-  };
+  const handleAddIngredient = useCallback(
+    (ingredient: TIngredient) => {
+      if (ingredient.type === 'bun') {
+        dispatch(addBun(ingredient));
+      } else {
+        dispatch(addIngredientAction(ingredient));
+      }
+    },
+    [dispatch]
+  );
 
   return (
-    <BurgerConstructorUI
-      price={price}
-      orderRequest={orderRequest}
-      constructorItems={constructorItems}
-      orderModalData={currentOrder}
-      onOrderClick={onOrderClick}
-      closeOrderModal={closeOrderModal}
-      moveIngredient={moveItem}
-      onAddIngredient={handleAddIngredient}
-    />
+    <div ref={dropTarget} style={{ opacity: isHover ? 0.8 : 1 }}>
+      <BurgerConstructorUI
+        price={price}
+        orderRequest={orderRequest}
+        constructorItems={constructorItems}
+        orderModalData={currentOrder}
+        onOrderClick={onOrderClick}
+        closeOrderModal={closeOrderModal}
+        moveIngredient={moveItem}
+        onAddIngredient={handleAddIngredient}
+      />
+    </div>
   );
 };

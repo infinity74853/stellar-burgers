@@ -1,5 +1,3 @@
-// src\pages\register\register.tsx
-
 import { FC, SyntheticEvent, useState } from 'react';
 import { RegisterUI } from '@ui-pages';
 import { useDispatch } from '../../services/store';

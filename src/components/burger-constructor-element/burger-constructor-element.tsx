@@ -1,17 +1,20 @@
-import React, { FC, memo } from 'react';
+import React, { FC, memo, useRef } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
-
 import { BurgerConstructorElementUI } from '@ui';
 import { BurgerConstructorElementProps } from './type';
-import { moveIngredient } from '../../services/slices/burgerConstructorSlice';
+import {
+  moveIngredient,
+  removeIngredient
+} from '../../services/slices/burgerConstructorSlice';
 import { useDispatch } from '../../services/store';
 
 export const BurgerConstructorElement: FC<BurgerConstructorElementProps> = memo(
   ({ ingredient, index, totalItems }) => {
     const dispatch = useDispatch();
+    const ref = useRef<HTMLDivElement>(null);
 
     const [{ isDragging }, drag] = useDrag({
-      type: 'constructor-ingredient', // только для внутреннего перемещения
+      type: 'constructor-ingredient',
       item: { index },
       collect: (monitor) => ({
         isDragging: monitor.isDragging()
@@ -20,13 +23,31 @@ export const BurgerConstructorElement: FC<BurgerConstructorElementProps> = memo(
 
     const [, drop] = useDrop({
       accept: 'constructor-ingredient',
-      hover: (item: { index: number }) => {
-        if (item.index === index) return;
+      hover(item: { index: number }, monitor) {
+        if (!ref.current) return;
+        const dragIndex = item.index;
+        const hoverIndex = index;
 
-        dispatch(moveIngredient({ from: item.index, to: index }));
-        item.index = index;
+        if (dragIndex === hoverIndex) return;
+
+        const hoverBoundingRect = ref.current.getBoundingClientRect();
+        const hoverMiddleY =
+          (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2;
+        const clientOffset = monitor.getClientOffset();
+
+        if (!clientOffset) return;
+
+        const hoverClientY = clientOffset.y - hoverBoundingRect.top;
+
+        if (dragIndex < hoverIndex && hoverClientY < hoverMiddleY) return;
+        if (dragIndex > hoverIndex && hoverClientY > hoverMiddleY) return;
+
+        dispatch(moveIngredient({ from: dragIndex, to: hoverIndex }));
+        item.index = hoverIndex;
       }
     });
+
+    drag(drop(ref));
 
     const handleMoveUp = () => {
       if (index > 0) {
@@ -41,11 +62,11 @@ export const BurgerConstructorElement: FC<BurgerConstructorElementProps> = memo(
     };
 
     const handleClose = () => {
-      // Логика удаления
+      dispatch(removeIngredient(String(index))); // Преобразуем число в строку
     };
 
     return (
-      <div ref={(node) => drag(drop(node))}>
+      <div ref={ref} style={{ opacity: isDragging ? 0.5 : 1 }}>
         <BurgerConstructorElementUI
           ingredient={ingredient}
           index={index}

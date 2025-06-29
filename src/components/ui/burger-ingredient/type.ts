@@ -7,5 +7,5 @@ export type TBurgerIngredientUIProps = {
   handleAdd: () => void;
   locationState?: { background: Location };
   onDragStart?: (e: React.DragEvent<HTMLDivElement>) => void;
-  onClick?: () => void; // Добавляем новый пропс
+  onClick?: () => void;
 };

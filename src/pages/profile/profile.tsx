@@ -1,4 +1,3 @@
-// src/pages/profile/profile.tsx
 import { ProfileUI } from '@ui-pages';
 import { FC, SyntheticEvent, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from '../../services/store';
@@ -19,7 +18,6 @@ export const Profile: FC = () => {
   });
 
   useEffect(() => {
-    // Загружаем данные пользователя при монтировании
     if (!user) {
       navigate('/login');
       return;
@@ -31,7 +29,6 @@ export const Profile: FC = () => {
       password: ''
     });
 
-    // Загружаем историю заказов
     const accessToken = getAccessToken();
     if (accessToken) {
       dispatch(fetchUserOrders());

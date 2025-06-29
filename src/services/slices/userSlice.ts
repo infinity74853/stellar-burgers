@@ -6,7 +6,7 @@ import {
   registerUserApi,
   logoutApi,
   updateUserApi,
-  refreshToken as refreshTokenApi // Это функция API
+  refreshToken as refreshTokenApi
 } from '../../utils/burger-api';
 import { TUser } from '@utils-types';
 
@@ -26,19 +26,17 @@ const initialState: TUserState = {
   error: null
 };
 
-// Унифицированная обработка ошибок
 const getErrorMessage = (error: unknown): string => {
   if (error instanceof Error) return error.message;
   if (typeof error === 'string') return error;
   return 'Unknown error occurred';
 };
 
-// ✅ Переименовали thunk
 export const fetchRefreshToken = createAsyncThunk(
   'user/fetchRefreshToken',
   async (_, { rejectWithValue }) => {
     try {
-      const response = await refreshTokenApi(); // Используем функцию API
+      const response = await refreshTokenApi();
       return response;
     } catch (error) {
       deleteCookie('accessToken');
