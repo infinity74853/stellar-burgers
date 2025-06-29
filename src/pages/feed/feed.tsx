@@ -1,31 +1,24 @@
-import { Preloader } from '../../components/ui/preloader';
+import { Preloader } from '@ui';
 import { FeedUI } from '@ui-pages';
 import { FC, useEffect } from 'react';
-import { useDispatch, useSelector } from '../../services/store';
-import { getFeeds } from '../../services/slices/feedSlice';
+import { useSelector, useDispatch } from '../../services/store';
+import { getFeeds, selectFeed } from '../../services/slices/feedSlice';
 
 export const Feed: FC = () => {
   const dispatch = useDispatch();
-  const { orders, total, totalToday, loading, error } = useSelector(
-    (state) => state.feed
-  );
+  const { orders, total, totalToday, loading } = useSelector(selectFeed);
 
   useEffect(() => {
     dispatch(getFeeds());
   }, [dispatch]);
 
-  if (loading) {
+  if (loading || !orders.length) {
     return <Preloader />;
-  }
-
-  if (error) {
-    console.error('Error loading feeds:', error);
-    return <div>Error: {error}</div>;
   }
 
   return (
     <FeedUI
-      orders={orders || []} // Добавляем fallback на случай undefined
+      orders={orders}
       handleGetFeeds={() => dispatch(getFeeds())}
       total={total}
       today={totalToday}

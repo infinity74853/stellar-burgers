@@ -1,12 +1,21 @@
-import { useSelector } from '../../services/store';
+import { useSelector, useDispatch } from '../../services/store';
 import styles from './constructor-page.module.css';
 import { BurgerIngredients, BurgerConstructor } from '@components';
-import { Preloader } from '../../components/ui/preloader'; // Исправленный импорт
-import { FC } from 'react';
+import { Preloader } from '../../components/ui/preloader';
+import { FC, useEffect } from 'react';
+import { clearCurrentIngredient } from '../../services/slices/ingredientsSlice';
 
 export const ConstructorPage: FC = () => {
-  // Используем правильное имя из стора
+  const dispatch = useDispatch();
+
   const { isLoading } = useSelector((state) => state.ingredients);
+
+  useEffect(
+    () => () => {
+      dispatch(clearCurrentIngredient());
+    },
+    [dispatch]
+  );
 
   return (
     <>

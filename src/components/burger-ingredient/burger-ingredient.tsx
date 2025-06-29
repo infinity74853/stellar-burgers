@@ -7,11 +7,14 @@ import {
   addIngredient,
   addBun
 } from '../../services/slices/burgerConstructorSlice';
+import { setCurrentIngredient } from '../../services/slices/ingredientsSlice';
+import { useNavigate } from 'react-router-dom';
 
 export const BurgerIngredient: FC<TBurgerIngredientProps> = memo(
   ({ ingredient, count }) => {
     const location = useLocation();
     const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     const handleAdd = () => {
       if (ingredient.type === 'bun') {
@@ -21,9 +24,14 @@ export const BurgerIngredient: FC<TBurgerIngredientProps> = memo(
       }
     };
 
-    // Логика drag and drop
+    const handleClick = () => {
+      dispatch(setCurrentIngredient(ingredient));
+      navigate(`/ingredients/${ingredient._id}`, {
+        state: { background: location }
+      });
+    };
+
     const handleDragStart = (e: React.DragEvent<HTMLDivElement>) => {
-      console.log('Начали перетаскивать:', ingredient);
       e.dataTransfer.setData('ingredient', JSON.stringify(ingredient));
     };
 
@@ -33,7 +41,8 @@ export const BurgerIngredient: FC<TBurgerIngredientProps> = memo(
         count={count}
         locationState={{ background: location }}
         handleAdd={handleAdd}
-        onDragStart={handleDragStart} // <-- Передаем событие
+        onClick={handleClick} // Добавляем обработчик клика
+        onDragStart={handleDragStart}
       />
     );
   }

@@ -34,7 +34,7 @@ export const Profile: FC = () => {
     const accessToken = getAccessToken();
     if (!accessToken) {
       console.error('Токен отсутствует');
-      // Можно добавить редирект на логин
+
       return;
     }
 
@@ -46,10 +46,8 @@ export const Profile: FC = () => {
           ...(formValue.password && { password: formValue.password })
         })
       ).unwrap();
-      console.log('Успешное обновление:', result);
     } catch (error) {
       console.error('Ошибка сохранения:', error);
-      // Добавить обработку ошибки (например, показать уведомление)
     }
   };
 

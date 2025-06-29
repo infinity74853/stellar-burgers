@@ -1,10 +1,15 @@
 import { useState, useRef, useEffect, FC, useMemo } from 'react';
 import { useInView } from 'react-intersection-observer';
-import { useSelector } from '../../services/store';
+import { useSelector, useDispatch } from '../../services/store';
 import { TTabMode, TIngredient } from '@utils-types';
 import { BurgerIngredientsUI } from '../ui/burger-ingredients';
+import { setCurrentIngredient } from '../../services/slices/ingredientsSlice';
+import { useNavigate } from 'react-router-dom';
 
 export const BurgerIngredients: FC = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   const { ingredients, isLoading, loaded } = useSelector(
     (state) => state.ingredients
   );
@@ -66,6 +71,11 @@ export const BurgerIngredients: FC = () => {
       titleSaucesRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
+  const handleIngredientClick = (ingredient: TIngredient) => {
+    dispatch(setCurrentIngredient(ingredient));
+    navigate(`/ingredients/${ingredient._id}`, { state: { modal: true } });
+  };
+
   if (!loaded || isLoading) {
     return <div>Загрузка ингредиентов...</div>;
   }
@@ -87,6 +97,7 @@ export const BurgerIngredients: FC = () => {
       mainsRef={mainsRef}
       saucesRef={saucesRef}
       onTabClick={onTabClick}
+      onIngredientClick={handleIngredientClick}
     />
   );
 };

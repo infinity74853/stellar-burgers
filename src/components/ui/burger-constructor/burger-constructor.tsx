@@ -36,14 +36,10 @@ export const BurgerConstructorUI: FC<BurgerConstructorUIProps> = ({
 
       try {
         const ingredient = JSON.parse(data);
-        console.log('Получили ингредиент:', ingredient);
 
-        // Если это булка — отправляем через addBun
         if (ingredient.type === 'bun') {
-          console.log('Добавляем булку:', ingredient.name);
           onAddIngredient({ ...ingredient, type: 'bun' });
         } else {
-          // Для соусов и начинок — как обычно
           onAddIngredient(ingredient);
         }
       } catch (error) {
@@ -54,7 +50,7 @@ export const BurgerConstructorUI: FC<BurgerConstructorUIProps> = ({
   );
 
   const handleDragOver = useCallback((e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault(); // разрешаем drop
+    e.preventDefault();
   }, []);
 
   return (
