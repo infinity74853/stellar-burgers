@@ -53,7 +53,6 @@ export const BurgerConstructorUI: FC<BurgerConstructorUIProps> = ({
     e.preventDefault();
   }, []);
 
-  // Константы для ограничения высоты
   const INGREDIENT_HEIGHT = 80;
   const MAX_VISIBLE_INGREDIENTS = 5;
   const MAX_INGREDIENTS_HEIGHT = INGREDIENT_HEIGHT * MAX_VISIBLE_INGREDIENTS;
@@ -88,7 +87,7 @@ export const BurgerConstructorUI: FC<BurgerConstructorUIProps> = ({
         className={styles.elements}
         style={{
           maxHeight: `${MAX_INGREDIENTS_HEIGHT}px`,
-          overflowY: 'auto',
+          overflowY: 'scroll',
           scrollbarWidth: 'thin'
         }}
       >

@@ -14,14 +14,12 @@ p {
   width: 120px;
 }
 
-/* Стили для скроллбаров */
 .content {
   overflow-y: scroll;
-  scrollbar-width: thin; /* Для Firefox */
-  scrollbar-color: #8585AD #2F2F37; /* Для Firefox */
+  scrollbar-width: thin;
+  scrollbar-color: #8585AD #2F2F37;
 }
 
-/* Для Chrome/Edge/Safari */
 .content::-webkit-scrollbar {
   width: 6px;
   height: 6px;

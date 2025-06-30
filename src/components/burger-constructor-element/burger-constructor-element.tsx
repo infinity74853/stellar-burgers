@@ -62,7 +62,7 @@ export const BurgerConstructorElement: FC<BurgerConstructorElementProps> = memo(
     };
 
     const handleClose = () => {
-      dispatch(removeIngredient(String(index))); // Преобразуем число в строку
+      dispatch(removeIngredient(String(index)));
     };
 
     return (
