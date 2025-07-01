@@ -10,7 +10,7 @@ type TFeedState = {
   loading: boolean;
   error: string | null;
   currentOrder: TOrder | null;
-  loaded: boolean; // Добавляем новый флаг
+  loaded: boolean;
 };
 
 const initialState: TFeedState = {
@@ -20,14 +20,13 @@ const initialState: TFeedState = {
   loading: false,
   error: null,
   currentOrder: null,
-  loaded: false // Инициализируем как false
+  loaded: false
 };
 
 export const getFeeds = createAsyncThunk(
   'feed/get',
   async (_, { getState }) => {
     const state = getState() as RootState;
-    // Если данные уже загружены, возвращаем текущие
     if (state.feed.loaded) {
       return {
         orders: state.feed.orders,
@@ -59,7 +58,7 @@ export const feedSlice = createSlice({
       }
     },
     resetFeedLoaded: (state) => {
-      state.loaded = false; // Добавляем action для сброса флага
+      state.loaded = false;
     }
   },
   extraReducers: (builder) => {
@@ -73,7 +72,7 @@ export const feedSlice = createSlice({
         state.orders = action.payload.orders;
         state.total = action.payload.total;
         state.totalToday = action.payload.totalToday;
-        state.loaded = true; // Устанавливаем флаг после успешной загрузки
+        state.loaded = true;
 
         if (state.currentOrder) {
           const updatedOrder = action.payload.orders.find(

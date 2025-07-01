@@ -19,8 +19,12 @@ import {
   ProfileOrders,
   NotFound404
 } from '@pages';
-import { IngredientDetails, Modal, OrderInfo } from '@components';
-import { ProtectedRoute } from '../protected-route/protected-route';
+import {
+  IngredientDetails,
+  Modal,
+  OrderInfo,
+  ProtectedRoute
+} from '@components';
 import { AppHeader } from '../app-header/app-header';
 import styles from './app.module.css';
 import { useDispatch, useSelector } from '../../services/store';

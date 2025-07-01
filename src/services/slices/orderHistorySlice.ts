@@ -8,7 +8,7 @@ type TOrdersState = {
   orderHistory: TOrder[];
   isLoading: boolean;
   error: string | null;
-  loaded: boolean; // Добавляем флаг загрузки
+  loaded: boolean;
 };
 
 const initialState: TOrdersState = {
@@ -16,7 +16,7 @@ const initialState: TOrdersState = {
   orderHistory: [],
   isLoading: false,
   error: null,
-  loaded: false // Инициализируем как false
+  loaded: false
 };
 
 export const createOrder = createAsyncThunk<TOrder, string[]>(
@@ -39,7 +39,6 @@ export const fetchUserOrders = createAsyncThunk<TOrder[]>(
   async (_, { rejectWithValue, getState }) => {
     try {
       const state = getState() as RootState;
-      // Если данные уже загружены, не делаем повторный запрос
       if (state.orderHistory.loaded) {
         return state.orderHistory.orderHistory;
       }
@@ -65,7 +64,6 @@ const orderHistorySlice = createSlice({
     resetOrderError: (state) => {
       state.error = null;
     },
-    // Добавляем редуктор для сброса флага загрузки
     resetOrdersLoaded: (state) => {
       state.loaded = false;
     }
@@ -92,7 +90,7 @@ const orderHistorySlice = createSlice({
     builder.addCase(fetchUserOrders.fulfilled, (state, action) => {
       state.isLoading = false;
       state.orderHistory = action.payload;
-      state.loaded = true; // Устанавливаем флаг загрузки
+      state.loaded = true;
     });
     builder.addCase(fetchUserOrders.rejected, (state, action) => {
       state.isLoading = false;
