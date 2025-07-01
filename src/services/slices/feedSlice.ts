@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { getFeedsApi } from '../../utils/burger-api';
 import { TOrder } from '@utils-types';
+import { RootState } from '../store';
 
 type TFeedState = {
   orders: TOrder[];
@@ -9,6 +10,7 @@ type TFeedState = {
   loading: boolean;
   error: string | null;
   currentOrder: TOrder | null;
+  loaded: boolean; // Добавляем новый флаг
 };
 
 const initialState: TFeedState = {
@@ -17,13 +19,26 @@ const initialState: TFeedState = {
   totalToday: 0,
   loading: false,
   error: null,
-  currentOrder: null
+  currentOrder: null,
+  loaded: false // Инициализируем как false
 };
 
-export const getFeeds = createAsyncThunk('feed/get', async () => {
-  const response = await getFeedsApi();
-  return response;
-});
+export const getFeeds = createAsyncThunk(
+  'feed/get',
+  async (_, { getState }) => {
+    const state = getState() as RootState;
+    // Если данные уже загружены, возвращаем текущие
+    if (state.feed.loaded) {
+      return {
+        orders: state.feed.orders,
+        total: state.feed.total,
+        totalToday: state.feed.totalToday
+      };
+    }
+    const response = await getFeedsApi();
+    return response;
+  }
+);
 
 export const feedSlice = createSlice({
   name: 'feed',
@@ -42,6 +57,9 @@ export const feedSlice = createSlice({
       if (index !== -1) {
         state.orders[index] = action.payload;
       }
+    },
+    resetFeedLoaded: (state) => {
+      state.loaded = false; // Добавляем action для сброса флага
     }
   },
   extraReducers: (builder) => {
@@ -55,6 +73,7 @@ export const feedSlice = createSlice({
         state.orders = action.payload.orders;
         state.total = action.payload.total;
         state.totalToday = action.payload.totalToday;
+        state.loaded = true; // Устанавливаем флаг после успешной загрузки
 
         if (state.currentOrder) {
           const updatedOrder = action.payload.orders.find(
@@ -72,15 +91,18 @@ export const feedSlice = createSlice({
   }
 });
 
-export const { setCurrentOrder, clearCurrentOrder, updateOrder } =
-  feedSlice.actions;
+export const {
+  setCurrentOrder,
+  clearCurrentOrder,
+  updateOrder,
+  resetFeedLoaded
+} = feedSlice.actions;
 
-export const selectFeed = (state: { feed: TFeedState }) => state.feed;
-export const selectOrders = (state: { feed: TFeedState }) => state.feed.orders;
-export const selectTotal = (state: { feed: TFeedState }) => state.feed.total;
-export const selectTotalToday = (state: { feed: TFeedState }) =>
-  state.feed.totalToday;
-export const selectCurrentOrder = (state: { feed: TFeedState }) =>
-  state.feed.currentOrder;
+export const selectFeed = (state: RootState) => state.feed;
+export const selectOrders = (state: RootState) => state.feed.orders;
+export const selectTotal = (state: RootState) => state.feed.total;
+export const selectTotalToday = (state: RootState) => state.feed.totalToday;
+export const selectCurrentOrder = (state: RootState) => state.feed.currentOrder;
+export const selectFeedLoaded = (state: RootState) => state.feed.loaded;
 
 export default feedSlice.reducer;

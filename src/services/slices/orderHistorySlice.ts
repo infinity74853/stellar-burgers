@@ -8,13 +8,15 @@ type TOrdersState = {
   orderHistory: TOrder[];
   isLoading: boolean;
   error: string | null;
+  loaded: boolean; // Добавляем флаг загрузки
 };
 
 const initialState: TOrdersState = {
   currentOrder: null,
   orderHistory: [],
   isLoading: false,
-  error: null
+  error: null,
+  loaded: false // Инициализируем как false
 };
 
 export const createOrder = createAsyncThunk<TOrder, string[]>(
@@ -34,8 +36,13 @@ export const createOrder = createAsyncThunk<TOrder, string[]>(
 
 export const fetchUserOrders = createAsyncThunk<TOrder[]>(
   'orders/fetchAll',
-  async (_, { rejectWithValue }) => {
+  async (_, { rejectWithValue, getState }) => {
     try {
+      const state = getState() as RootState;
+      // Если данные уже загружены, не делаем повторный запрос
+      if (state.orderHistory.loaded) {
+        return state.orderHistory.orderHistory;
+      }
       const orders = await getOrdersApi();
       return orders;
     } catch (error) {
@@ -48,8 +55,8 @@ export const fetchUserOrders = createAsyncThunk<TOrder[]>(
   }
 );
 
-const ordersSlice = createSlice({
-  name: 'orders',
+const orderHistorySlice = createSlice({
+  name: 'orderHistory',
   initialState,
   reducers: {
     clearOrder: (state) => {
@@ -57,6 +64,10 @@ const ordersSlice = createSlice({
     },
     resetOrderError: (state) => {
       state.error = null;
+    },
+    // Добавляем редуктор для сброса флага загрузки
+    resetOrdersLoaded: (state) => {
+      state.loaded = false;
     }
   },
   extraReducers: (builder) => {
@@ -81,6 +92,7 @@ const ordersSlice = createSlice({
     builder.addCase(fetchUserOrders.fulfilled, (state, action) => {
       state.isLoading = false;
       state.orderHistory = action.payload;
+      state.loaded = true; // Устанавливаем флаг загрузки
     });
     builder.addCase(fetchUserOrders.rejected, (state, action) => {
       state.isLoading = false;
@@ -90,11 +102,15 @@ const ordersSlice = createSlice({
 });
 
 export const selectCurrentOrder = (state: RootState) =>
-  state.orders.currentOrder;
+  state.orderHistory.currentOrder;
 export const selectOrderHistory = (state: RootState) =>
-  state.orders.orderHistory;
-export const selectOrdersLoading = (state: RootState) => state.orders.isLoading;
-export const selectOrdersError = (state: RootState) => state.orders.error;
+  state.orderHistory.orderHistory;
+export const selectOrdersLoading = (state: RootState) =>
+  state.orderHistory.isLoading;
+export const selectOrdersError = (state: RootState) => state.orderHistory.error;
+export const selectOrdersLoaded = (state: RootState) =>
+  state.orderHistory.loaded;
 
-export const { clearOrder, resetOrderError } = ordersSlice.actions;
-export default ordersSlice.reducer;
+export const { clearOrder, resetOrderError, resetOrdersLoaded } =
+  orderHistorySlice.actions;
+export default orderHistorySlice.reducer;

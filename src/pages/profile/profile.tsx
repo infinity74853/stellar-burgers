@@ -2,7 +2,10 @@ import { ProfileUI } from '@ui-pages';
 import { FC, SyntheticEvent, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from '../../services/store';
 import { updateUser } from '../../services/slices/userSlice';
-import { fetchUserOrders } from '../../services/slices/orderHistorySlice';
+import {
+  fetchUserOrders,
+  selectOrdersLoaded
+} from '../../services/slices/orderHistorySlice';
 import { getAccessToken } from '../../utils/cookie';
 import { useNavigate } from 'react-router-dom';
 
@@ -10,6 +13,7 @@ export const Profile: FC = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { user } = useSelector((state) => state.user);
+  const ordersLoaded = useSelector(selectOrdersLoaded);
 
   const [formValue, setFormValue] = useState({
     name: user?.name || '',
@@ -30,10 +34,10 @@ export const Profile: FC = () => {
     });
 
     const accessToken = getAccessToken();
-    if (accessToken) {
+    if (accessToken && !ordersLoaded) {
       dispatch(fetchUserOrders());
     }
-  }, [user, dispatch, navigate]);
+  }, [user, dispatch, navigate, ordersLoaded]);
 
   const isFormChanged =
     formValue.name !== user?.name ||

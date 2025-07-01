@@ -14,7 +14,6 @@ import {
   addBun
 } from '../../services/slices/burgerConstructorSlice';
 import { useDrop } from 'react-dnd';
-import styles from './burger-constructor.module.css';
 
 export const BurgerConstructor: FC = () => {
   const dispatch = useDispatch();
@@ -22,7 +21,7 @@ export const BurgerConstructor: FC = () => {
 
   const { bun, ingredients } = useSelector((state) => state.burgerConstructor);
   const { currentOrder, isLoading: orderRequest } = useSelector(
-    (state) => state.orders
+    (state) => state.orderHistory
   );
   const { user } = useSelector((state) => state.user);
 

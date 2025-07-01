@@ -5,7 +5,7 @@ import { ProfileOrdersUIProps } from './type';
 import { ProfileMenu, OrdersList } from '@components';
 
 export const ProfileOrdersUI: FC<ProfileOrdersUIProps> = () => {
-  const { orderHistory } = useSelector((state) => state.orders);
+  const { orderHistory } = useSelector((state) => state.orderHistory);
 
   return (
     <main className={`${styles.main}`}>
