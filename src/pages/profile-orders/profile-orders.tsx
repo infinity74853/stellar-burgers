@@ -5,25 +5,23 @@ import {
   fetchUserOrders,
   selectOrderHistory,
   selectOrdersLoading,
-  selectOrdersError,
-  selectOrdersLoaded
+  selectOrdersError
 } from '../../services/slices/orderHistorySlice';
 import { Preloader } from '@ui';
+import { selectIngredients } from '../../services/slices/ingredientsSlice';
 
 export const ProfileOrders: FC = () => {
   const dispatch = useDispatch();
   const orders = useSelector(selectOrderHistory);
   const isLoading = useSelector(selectOrdersLoading);
   const error = useSelector(selectOrdersError);
-  const loaded = useSelector(selectOrdersLoaded);
+  const ingredients = useSelector(selectIngredients);
 
   useEffect(() => {
-    if (!loaded) {
-      dispatch(fetchUserOrders());
-    }
-  }, [dispatch, loaded]);
+    dispatch(fetchUserOrders());
+  }, [dispatch]);
 
-  if (isLoading) {
+  if (isLoading || !ingredients.length) {
     return <Preloader />;
   }
 

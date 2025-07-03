@@ -5,14 +5,18 @@ import { useSelector } from '../../services/store';
 import { useParams } from 'react-router-dom';
 import { selectIngredients } from '../../services/slices/ingredientsSlice';
 import { selectOrders } from '../../services/slices/feedSlice';
+import { selectOrderHistory } from '../../services/slices/orderHistorySlice';
 import { TIngredient } from '@utils-types';
 
 export const OrderInfo: FC = () => {
   const { number } = useParams<{ number: string }>();
-  const orders = useSelector(selectOrders);
+  const feedOrders = useSelector(selectOrders);
+  const historyOrders = useSelector(selectOrderHistory);
   const ingredients = useSelector(selectIngredients);
 
-  const orderData = orders.find((order) => order.number === parseInt(number!));
+  const orderData =
+    feedOrders.find((order) => order.number === parseInt(number!)) ||
+    historyOrders.find((order) => order.number === parseInt(number!));
 
   const orderInfo = useMemo(() => {
     if (!orderData || !ingredients.length) return null;
@@ -55,8 +59,12 @@ export const OrderInfo: FC = () => {
     };
   }, [orderData, ingredients]);
 
-  if (!orderInfo) {
+  if (!ingredients.length) {
     return <Preloader />;
+  }
+
+  if (!orderInfo) {
+    return <p>Заказ #{number} не найден</p>;
   }
 
   return <OrderInfoUI orderInfo={orderInfo} />;

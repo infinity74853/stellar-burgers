@@ -5,28 +5,33 @@ import { useSelector, useDispatch } from '../../services/store';
 import {
   getFeeds,
   selectFeed,
-  selectFeedLoaded
+  resetFeedLoaded
 } from '../../services/slices/feedSlice';
 
 export const Feed: FC = () => {
   const dispatch = useDispatch();
   const { orders, total, totalToday, loading } = useSelector(selectFeed);
-  const loaded = useSelector(selectFeedLoaded);
 
   useEffect(() => {
-    if (!loaded) {
-      dispatch(getFeeds());
-    }
-  }, [dispatch, loaded]);
+    dispatch(getFeeds());
+    return () => {
+      dispatch(resetFeedLoaded());
+    };
+  }, [dispatch]);
 
   if (loading || !orders.length) {
     return <Preloader />;
   }
 
+  const handleRefresh = () => {
+    dispatch(resetFeedLoaded());
+    dispatch(getFeeds());
+  };
+
   return (
     <FeedUI
       orders={orders}
-      handleGetFeeds={() => dispatch(getFeeds())}
+      handleGetFeeds={handleRefresh}
       total={total}
       today={totalToday}
     />

@@ -23,21 +23,10 @@ const initialState: TFeedState = {
   loaded: false
 };
 
-export const getFeeds = createAsyncThunk(
-  'feed/get',
-  async (_, { getState }) => {
-    const state = getState() as RootState;
-    if (state.feed.loaded) {
-      return {
-        orders: state.feed.orders,
-        total: state.feed.total,
-        totalToday: state.feed.totalToday
-      };
-    }
-    const response = await getFeedsApi();
-    return response;
-  }
-);
+export const getFeeds = createAsyncThunk('feed/get', async () => {
+  const response = await getFeedsApi();
+  return response;
+});
 
 export const feedSlice = createSlice({
   name: 'feed',

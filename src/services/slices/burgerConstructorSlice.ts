@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction, nanoid } from '@reduxjs/toolkit';
 import { TIngredient } from '@utils-types';
 
 export type TConstructorIngredient = TIngredient & {
@@ -19,22 +19,29 @@ export const burgerConstructorSlice = createSlice({
   name: 'burgerConstructor',
   initialState,
   reducers: {
-    addBun: (state, action: PayloadAction<TIngredient>) => {
-      state.bun = action.payload;
+    addBun: {
+      reducer: (state, action: PayloadAction<TIngredient>) => {
+        state.bun = action.payload;
+      },
+      prepare: (ingredient: TIngredient) => ({ payload: ingredient })
     },
-
-    addIngredient: (state, action: PayloadAction<TIngredient>) => {
-      const id = crypto.randomUUID();
-      state.ingredients.push({ ...action.payload, id });
+    addIngredient: {
+      reducer: (state, action: PayloadAction<TConstructorIngredient>) => {
+        state.ingredients.push(action.payload);
+      },
+      prepare: (ingredient: TIngredient) => ({
+        payload: {
+          ...ingredient,
+          id: nanoid()
+        }
+      })
     },
-
     removeIngredient: (state, action: PayloadAction<string>) => {
       const indexToRemove = Number(action.payload);
       state.ingredients = state.ingredients.filter(
         (_, index) => index !== indexToRemove
       );
     },
-
     moveIngredient: (
       state,
       action: PayloadAction<{ from: number; to: number }>
@@ -43,7 +50,6 @@ export const burgerConstructorSlice = createSlice({
       const [moved] = state.ingredients.splice(from, 1);
       state.ingredients.splice(to, 0, moved);
     },
-
     clearConstructor: (state) => {
       state.bun = null;
       state.ingredients = [];

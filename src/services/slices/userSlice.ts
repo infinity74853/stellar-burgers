@@ -22,7 +22,7 @@ const initialState: TUserState = {
   user: null,
   isAuthChecked: false,
   isAuthenticated: false,
-  loading: false,
+  loading: true,
   error: null
 };
 

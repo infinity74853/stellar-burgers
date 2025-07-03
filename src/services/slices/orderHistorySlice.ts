@@ -36,12 +36,8 @@ export const createOrder = createAsyncThunk<TOrder, string[]>(
 
 export const fetchUserOrders = createAsyncThunk<TOrder[]>(
   'orders/fetchAll',
-  async (_, { rejectWithValue, getState }) => {
+  async (_, { rejectWithValue }) => {
     try {
-      const state = getState() as RootState;
-      if (state.orderHistory.loaded) {
-        return state.orderHistory.orderHistory;
-      }
       const orders = await getOrdersApi();
       return orders;
     } catch (error) {

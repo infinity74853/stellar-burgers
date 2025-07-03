@@ -1,7 +1,8 @@
 import { FC, ReactElement } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector } from '../../services/store';
 import { Navigate, useLocation } from 'react-router-dom';
 import { RootState } from '../../services/store';
+import { Preloader } from '../ui/preloader/preloader';
 
 interface ProtectedRouteProps {
   onlyUnAuth?: boolean;
@@ -13,7 +14,15 @@ export const ProtectedRoute: FC<ProtectedRouteProps> = ({
   children
 }) => {
   const user = useSelector((state: RootState) => state.user.user);
+  const isAuthChecked = useSelector(
+    (state: RootState) => state.user.isAuthChecked
+  );
+  const loading = useSelector((state: RootState) => state.user.loading);
   const location = useLocation();
+
+  if (loading || !isAuthChecked) {
+    return <Preloader />;
+  }
 
   if (onlyUnAuth && user) {
     return <Navigate to={location.state?.from || '/'} replace />;
