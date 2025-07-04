@@ -11,7 +11,31 @@
   width: 260px;
   cursor: pointer;
   text-decoration: none;
-  color: #ffff;
+  color: #F2F2F3;
+  transition: color 0.3s ease;
+}
+
+.article:hover {
+  color: #6a6aFF;
+}
+
+.imageWrapper {
+  overflow: hidden;
+  border-radius: 50%;
+  width: 240px;
+  height: 120px;
+  margin: 0 auto;
+}
+
+.img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.1s ease;
+}
+
+.article:hover .img {
+  transform: scale(1.1);
 }
 
 .cost {
@@ -22,9 +46,22 @@
 
 .text {
   text-align: center;
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.1s ease;
 }
 
 .addButton {
   width: 260px;
   justify-content: center;
+}
+
+.draggable {
+  transition: all 0.3s ease;
+}
+
+.draggable:hover {
+  cursor: grab;
 }

@@ -1,4 +1,14 @@
-import { TConstructorIngredient } from '@utils-types';
+import { TIngredient } from '@utils-types';
+
+export type TConstructorIngredient = TIngredient & {
+  id: string;
+};
+
+export type BurgerConstructorElementProps = {
+  ingredient: TConstructorIngredient;
+  index: number;
+  totalItems: number;
+};
 
 export type BurgerConstructorElementUIProps = {
   ingredient: TConstructorIngredient;

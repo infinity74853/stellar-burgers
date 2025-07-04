@@ -1,7 +1,7 @@
 export type TIngredient = {
   _id: string;
   name: string;
-  type: string;
+  type: 'bun' | 'main' | 'sauce';
   proteins: number;
   fat: number;
   carbohydrates: number;
@@ -18,12 +18,20 @@ export type TConstructorIngredient = TIngredient & {
 
 export type TOrder = {
   _id: string;
-  status: string;
+  ingredients: string[];
+  status: 'created' | 'pending' | 'done';
   name: string;
   createdAt: string;
   updatedAt: string;
   number: number;
-  ingredients: string[];
+};
+
+export type TOrderResponse = {
+  success: boolean;
+  orders: TOrder[];
+  order?: TOrder;
+  total: number;
+  totalToday: number;
 };
 
 export type TOrdersData = {
@@ -35,6 +43,37 @@ export type TOrdersData = {
 export type TUser = {
   email: string;
   name: string;
+  password?: string;
+  accessToken?: string;
+  refreshToken?: string;
+};
+
+export type TWsActions = {
+  wsInit: string;
+  wsClose: string;
+  onOpen: string;
+  onClose: string;
+  onError: string;
+  onMessage: string;
 };
 
 export type TTabMode = 'bun' | 'sauce' | 'main';
+
+export type TIngredientsState = {
+  ingredients: TIngredient[];
+  isLoading: boolean;
+  error: string | null;
+};
+
+export type TUserState = {
+  user: TUser | null;
+  isAuthChecked: boolean;
+  isAuthenticated: boolean;
+  loading: boolean;
+  error: string | null;
+};
+
+export type TErrorResponse = {
+  message: string;
+  name: string;
+};
