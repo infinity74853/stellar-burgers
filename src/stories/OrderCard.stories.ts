@@ -22,7 +22,7 @@ export const DefaultOrderCard: Story = {
         {
           _id: '111',
           name: 'Булка',
-          type: 'top',
+          type: 'bun',
           proteins: 12,
           fat: 33,
           carbohydrates: 22,
@@ -37,7 +37,7 @@ export const DefaultOrderCard: Story = {
         {
           _id: '111',
           name: 'Булка',
-          type: 'top',
+          type: 'bun',
           proteins: 12,
           fat: 33,
           carbohydrates: 22,
@@ -50,7 +50,7 @@ export const DefaultOrderCard: Story = {
         {
           _id: '111',
           name: 'Начинка',
-          type: 'top',
+          type: 'sauce',
           proteins: 12,
           fat: 33,
           carbohydrates: 22,

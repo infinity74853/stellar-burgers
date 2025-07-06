@@ -1,10 +1,15 @@
 import { FC, memo } from 'react';
-
 import styles from './feed.module.css';
-
-import { FeedUIProps } from './type';
 import { OrdersList, FeedInfo } from '@components';
 import { RefreshButton } from '@zlden/react-developer-burger-ui-components';
+import { TOrder } from '@utils-types';
+
+export type FeedUIProps = {
+  orders: TOrder[];
+  handleGetFeeds: () => void;
+  total: number;
+  today: number;
+};
 
 export const FeedUI: FC<FeedUIProps> = memo(({ orders, handleGetFeeds }) => (
   <main className={styles.containerMain}>

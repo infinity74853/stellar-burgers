@@ -2,7 +2,6 @@
   font-family: 'Jet Brains Mono';
   color: #f2f2f3;
   max-width: 600px;
-
   display: flex;
   flex-direction: column;
 }
@@ -17,6 +16,23 @@ p {
 
 .content {
   overflow-y: scroll;
+  scrollbar-width: thin;
+  scrollbar-color: #8585AD #2F2F37;
+}
+
+.content::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.content::-webkit-scrollbar-track {
+  background: #2F2F37;
+  border-radius: 3px;
+}
+
+.content::-webkit-scrollbar-thumb {
+  background-color: #8585AD;
+  border-radius: 3px;
 }
 
 .menu {

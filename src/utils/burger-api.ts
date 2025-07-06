@@ -67,8 +67,8 @@ type TFeedsResponse = TServerResponse<{
   totalToday: number;
 }>;
 
-type TOrdersResponse = TServerResponse<{
-  data: TOrder[];
+type TUserOrdersResponse = TServerResponse<{
+  orders: TOrder[];
 }>;
 
 export const getIngredientsApi = () =>
@@ -87,13 +87,13 @@ export const getFeedsApi = () =>
       return Promise.reject(data);
     });
 
-export const getOrdersApi = () =>
-  fetchWithRefresh<TFeedsResponse>(`${URL}/orders`, {
+export const getOrdersApi = (): Promise<TOrder[]> =>
+  fetchWithRefresh<TUserOrdersResponse>(`${URL}/orders`, {
     method: 'GET',
     headers: {
-      'Content-Type': 'application/json;charset=utf-8',
-      authorization: getCookie('accessToken')
-    } as HeadersInit
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${getCookie('accessToken')}`
+    }
   }).then((data) => {
     if (data?.success) return data.orders;
     return Promise.reject(data);
@@ -109,8 +109,8 @@ export const orderBurgerApi = (data: string[]) =>
     method: 'POST',
     headers: {
       'Content-Type': 'application/json;charset=utf-8',
-      authorization: getCookie('accessToken')
-    } as HeadersInit,
+      Authorization: `Bearer ${getCookie('accessToken')}`
+    },
     body: JSON.stringify({
       ingredients: data
     })
@@ -209,8 +209,8 @@ type TUserResponse = TServerResponse<{ user: TUser }>;
 export const getUserApi = () =>
   fetchWithRefresh<TUserResponse>(`${URL}/auth/user`, {
     headers: {
-      authorization: getCookie('accessToken')
-    } as HeadersInit
+      Authorization: `Bearer ${getCookie('accessToken')}`
+    }
   });
 
 export const updateUserApi = (user: Partial<TRegisterData>) =>
@@ -218,12 +218,12 @@ export const updateUserApi = (user: Partial<TRegisterData>) =>
     method: 'PATCH',
     headers: {
       'Content-Type': 'application/json;charset=utf-8',
-      authorization: getCookie('accessToken')
-    } as HeadersInit,
+      Authorization: `Bearer ${getCookie('accessToken')}`
+    },
     body: JSON.stringify(user)
   });
 
-export const logoutApi = () =>
+export const logoutApi = (): Promise<TServerResponse<{}>> =>
   fetch(`${URL}/auth/logout`, {
     method: 'POST',
     headers: {
