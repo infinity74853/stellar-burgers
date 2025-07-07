@@ -1,0 +1,17 @@
+{
+  "success": true,
+  "data": [
+    {
+      "_id": "60d3b41abdacab0026a733c6",
+      "name": "Краторная булка N-200i",
+      "type": "bun",
+      "image": "https://code.s3.yandex.net/react/code/bun-02.png"
+    },
+    {
+      "_id": "60d3b41abdacab0026a733c8",
+      "name": "Филе Люминесцентного тетраодонтимформа",
+      "type": "main",
+      "image": "https://code.s3.yandex.net/react/code/meat-03.png"
+    }
+  ]
+}
