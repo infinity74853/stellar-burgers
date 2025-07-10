@@ -48,12 +48,7 @@ function App() {
       );
     }
 
-    const accessToken = getCookie('accessToken');
-    if (accessToken) {
-      dispatch(checkUserAuth()).catch((err) =>
-        console.error('Auth check failed:', err)
-      );
-    }
+    dispatch(checkUserAuth());
   }, [dispatch, ingredientsLoaded]);
 
   const handleModalClose = () => {

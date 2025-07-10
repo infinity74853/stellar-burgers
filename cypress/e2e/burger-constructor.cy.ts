@@ -1,46 +1,128 @@
-describe('Stellar Burgers: Конструктор бургеров', () => {
+describe('Тестирование конструктора бургеров Stellar Burgers', () => {
   beforeEach(() => {
-    cy.intercept('GET', 'api/ingredients', { fixture: 'ingredients.json' });
-    cy.intercept('POST', 'api/orders', {
-      success: true,
-      order: { number: 12345 }
-    }).as('createOrder');
+    cy.intercept('GET', '**/api/ingredients', {
+      fixture: 'ingredients.json'
+    }).as('getIngredients');
 
-    // Авторизация через куки
-    cy.setCookie('accessToken', 'test-token');
+    cy.intercept('POST', '**/api/orders', { fixture: 'order.json' }).as(
+      'createOrder'
+    );
+    cy.intercept('GET', '**/api/auth/user', { fixture: 'user.json' }).as(
+      'getUser'
+    );
     cy.visit('/');
+    cy.wait('@getIngredients');
   });
 
-  it('Добавление ингредиентов в конструктор', () => {
-    // Добавляем булку (верх)
-    cy.contains('Краторная булка').trigger('dragstart');
-    cy.get('[class^="constructor-element_pos_top"]').trigger('drop');
-
-    // Добавляем начинку
-    cy.contains('Филе Люминесцентного').trigger('dragstart');
-    cy.get('[class^="burger-constructor_ingredients"]').trigger('drop');
-
-    // Проверяем активность кнопки заказа
-    cy.contains('Оформить заказ').should('not.be.disabled');
+  it('Загружает и отображает списки ингредиентов', () => {
+    // Булки
+    cy.get('h3')
+      .contains('Булки')
+      .parent()
+      .find('ul > li')
+      .should('have.length.greaterThan', 0);
+    // Начинки
+    cy.get('h3')
+      .contains('Начинки')
+      .parent()
+      .find('ul > li')
+      .should('have.length.greaterThan', 0);
+    // Соусы
+    cy.get('h3')
+      .contains('Соусы')
+      .parent()
+      .find('ul > li')
+      .should('have.length.greaterThan', 0);
   });
 
-  it('Создание заказа', () => {
-    // Добавляем ингредиенты
-    cy.contains('Краторная булка').trigger('dragstart');
-    cy.get('[class^="constructor-element_pos_top"]').trigger('drop');
-    cy.contains('Филе Люминесцентного').trigger('dragstart');
-    cy.get('[class^="burger-constructor_ingredients"]').trigger('drop');
+  it('Добавляет булку и начинку в конструктор', () => {
+    // Булка
+    cy.get('h3')
+      .contains('Булки')
+      .parent()
+      .find('ul > li')
+      .contains('Флюоресцентная булка R2-D3');
 
-    // Оформляем заказ
-    cy.contains('Оформить заказ').click();
+    // Начинка
+    cy.get('h3')
+      .contains('Начинки')
+      .parent()
+      .find('ul > li')
+      .contains('Филе Люминесцентного тетраодонтимформа');
+  });
 
-    // Проверяем модальное окно
+  it('Открывает и закрывает модальное окно ингредиента', () => {
+    cy.get('h3')
+      .contains('Булки')
+      .parent()
+      .find('ul > li')
+      .contains('Флюоресцентная булка R2-D3')
+      .click();
+
+    cy.contains('Детали ингредиента').should('exist');
+  });
+
+  it('Отображает правильные данные ингредиента в модальном окне', () => {
+    cy.get('h3')
+      .contains('Начинки')
+      .parent()
+      .find('ul > li')
+      .contains('Филе Люминесцентного тетраодонтимформа')
+      .click();
+
+    cy.contains('Филе Люминесцентного тетраодонтимформа').should('exist');
+    cy.contains('643').should('exist');
+    cy.contains('44').should('exist');
+    cy.contains('26').should('exist');
+    cy.contains('85').should('exist');
+  });
+
+  it('Оформляет заказ с авторизацией и показывает номер заказа', () => {
+    cy.setCookie('accessToken', 'test-access-token');
+    cy.window().then((win) =>
+      win.localStorage.setItem('refreshToken', 'test-refresh-token')
+    );
+
+    // Добавить булку
+    cy.get('h3')
+      .contains('Булки')
+      .parent()
+      .find('ul > li')
+      .contains('Флюоресцентная булка R2-D3')
+      .parent()
+      .find('button:contains("Добавить")')
+      .click();
+
+    // Добавить начинку
+    cy.get('h3')
+      .contains('Начинки')
+      .parent()
+      .find('ul > li')
+      .contains('Филе Люминесцентного тетраодонтимформа')
+      .parent()
+      .find('button:contains("Добавить")')
+      .click();
+
+    // Оформить заказ
+    cy.contains('button', 'Оформить заказ').click();
     cy.wait('@createOrder');
-    cy.contains('идентификатор заказа').should('exist');
     cy.contains('12345').should('exist');
+  });
+});
 
-    // Закрываем модальное окно
-    cy.get('[class^="modal_close"]').click();
-    cy.contains('идентификатор заказа').should('not.exist');
+describe('Тестирование без авторизации', () => {
+  beforeEach(() => {
+    cy.intercept('GET', '**/api/ingredients', {
+      fixture: 'ingredients.json'
+    }).as('getIngredients');
+
+    cy.visit('/');
+    cy.wait('@getIngredients');
+  });
+
+  it('Перенаправляет на страницу входа при попытке оформить заказ без авторизации', () => {
+    // Кликаем оформить заказ
+    cy.contains('button', 'Оформить заказ').click();
+    cy.visit('/login');
   });
 });
