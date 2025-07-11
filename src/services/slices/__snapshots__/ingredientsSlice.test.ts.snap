@@ -1,0 +1,149 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Тесты для ingredientsSlice Асинхронные экшены fetchIngredients.fulfilled сохраняет ингредиенты 1`] = `
+{
+  "currentIngredient": null,
+  "error": null,
+  "ingredients": [
+    {
+      "_id": "1",
+      "calories": 40,
+      "carbohydrates": 30,
+      "fat": 20,
+      "image": "image-url",
+      "image_large": "large-image-url",
+      "image_mobile": "mobile-image-url",
+      "name": "Булка",
+      "price": 100,
+      "proteins": 10,
+      "type": "bun",
+    },
+    {
+      "_id": "2",
+      "calories": 40,
+      "carbohydrates": 30,
+      "fat": 20,
+      "image": "image-url",
+      "image_large": "large-image-url",
+      "image_mobile": "mobile-image-url",
+      "name": "Соус",
+      "price": 100,
+      "proteins": 10,
+      "type": "sauce",
+    },
+  ],
+  "isLoading": false,
+  "loaded": true,
+}
+`;
+
+exports[`Тесты для ingredientsSlice Асинхронные экшены fetchIngredients.pending устанавливает флаг загрузки 1`] = `
+{
+  "currentIngredient": null,
+  "error": null,
+  "ingredients": [],
+  "isLoading": true,
+  "loaded": false,
+}
+`;
+
+exports[`Тесты для ingredientsSlice Асинхронные экшены fetchIngredients.rejected сохраняет ошибку 1`] = `
+{
+  "currentIngredient": null,
+  "error": "Ошибка загрузки",
+  "ingredients": [],
+  "isLoading": false,
+  "loaded": false,
+}
+`;
+
+exports[`Тесты для ingredientsSlice Начальное состояние совпадает со снапшотом 1`] = `
+{
+  "currentIngredient": null,
+  "error": null,
+  "ingredients": [],
+  "isLoading": false,
+  "loaded": false,
+}
+`;
+
+exports[`Тесты для ingredientsSlice Селекторы комбинация селекторов совпадает со снапшотом 1`] = `
+{
+  "current": {
+    "_id": "1",
+    "calories": 40,
+    "carbohydrates": 30,
+    "fat": 20,
+    "image": "image-url",
+    "image_large": "large-image-url",
+    "image_mobile": "mobile-image-url",
+    "name": "Булка",
+    "price": 100,
+    "proteins": 10,
+    "type": "bun",
+  },
+  "error": null,
+  "ingredients": [
+    {
+      "_id": "1",
+      "calories": 40,
+      "carbohydrates": 30,
+      "fat": 20,
+      "image": "image-url",
+      "image_large": "large-image-url",
+      "image_mobile": "mobile-image-url",
+      "name": "Булка",
+      "price": 100,
+      "proteins": 10,
+      "type": "bun",
+    },
+    {
+      "_id": "2",
+      "calories": 40,
+      "carbohydrates": 30,
+      "fat": 20,
+      "image": "image-url",
+      "image_large": "large-image-url",
+      "image_mobile": "mobile-image-url",
+      "name": "Соус",
+      "price": 100,
+      "proteins": 10,
+      "type": "sauce",
+    },
+  ],
+  "loaded": false,
+  "loading": false,
+}
+`;
+
+exports[`Тесты для ingredientsSlice Синхронные экшены clearCurrentIngredient очищает текущий ингредиент 1`] = `
+{
+  "currentIngredient": null,
+  "error": null,
+  "ingredients": [],
+  "isLoading": false,
+  "loaded": false,
+}
+`;
+
+exports[`Тесты для ingredientsSlice Синхронные экшены setCurrentIngredient устанавливает ингредиент 1`] = `
+{
+  "currentIngredient": {
+    "_id": "1",
+    "calories": 40,
+    "carbohydrates": 30,
+    "fat": 20,
+    "image": "image-url",
+    "image_large": "large-image-url",
+    "image_mobile": "mobile-image-url",
+    "name": "Булка",
+    "price": 100,
+    "proteins": 10,
+    "type": "bun",
+  },
+  "error": null,
+  "ingredients": [],
+  "isLoading": false,
+  "loaded": false,
+}
+`;
