@@ -5,7 +5,7 @@
     "name": "Test User"
   },
   "tokens": {
-    "accessToken": "Bearer test-access-token",
+    "accessToken": "test-access-token",
     "refreshToken": "test-refresh-token"
   }
 }
